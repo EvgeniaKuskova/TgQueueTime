@@ -1,3 +1,9 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using TgQueueTime;
 
-Console.WriteLine("Hello, World!");
+class Program
+{
+    static async Task Main()
+    {
+        await CompanyBot.Run();
+    }
+}
