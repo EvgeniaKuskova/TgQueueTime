@@ -8,16 +8,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="65864a72-10b6-4edd-b55e-a5eefb9a693e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/TgQueueTime/CompanyBot.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TgQueueTime/OrganizationBot.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TgQueueTime/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TgQueueTime/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/CompanyBot.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/TgQueueTime/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/TgQueueTime.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/TgQueueTime.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.assets.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.csproj.AssemblyReference.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/TgQueueTime.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/TgQueueTime.csproj.nuget.dgspec.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/project.assets.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/project.nuget.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/project.packagespec.json" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/project.packagespec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/bin/Debug/net6.0/TgQueueTime.dll" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/bin/Debug/net6.0/TgQueueTime.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/bin/Debug/net6.0/TgQueueTime.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/bin/Debug/net6.0/TgQueueTime.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.dll" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/ref/TgQueueTime.dll" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/ref/TgQueueTime.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/refint/TgQueueTime.dll" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/refint/TgQueueTime.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.model.nuget.info" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.restore.info" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -45,30 +47,31 @@
   &quot;associatedIndex&quot;: 1
 }</component>
   <component name="ProjectId" id="2o21dr4fWGi03TbdgjmPnxaj9T7" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Project.TgQueueTime.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "CompanyBot",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Project.TgQueueTime.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;CompanyBot&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "C:\\Users\\КусЯ\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
-      "C:\\Users\\КусЯ\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
-      "C:\\Users\\КусЯ\\AppData\\Local\\Symbols\\src"
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\КусЯ\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\КусЯ\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\КусЯ\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="TgQueueTime" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -99,6 +102,11 @@
       <updated>1730052948300</updated>
       <workItem from="1730052948555" duration="527000" />
       <workItem from="1730124071558" duration="1167000" />
+      <workItem from="1730182697391" duration="393000" />
+      <workItem from="1730299308096" duration="1954000" />
+      <workItem from="1730362016951" duration="2351000" />
+      <workItem from="1730867459562" duration="1130000" />
+      <workItem from="1730898746746" duration="6401000" />
     </task>
     <servers />
   </component>
@@ -107,6 +115,17 @@
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>

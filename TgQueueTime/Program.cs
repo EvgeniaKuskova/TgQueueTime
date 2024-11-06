@@ -1,9 +1,10 @@
-﻿using TgQueueTime;
+﻿namespace TgQueueTime;
 
-class Program
-{
-    static async Task Main()
+    class Program
     {
-        await CompanyBot.Run();
+        static async Task Main()
+        {
+            await OrganizationBot.Run();
+        }
     }
-}
+
