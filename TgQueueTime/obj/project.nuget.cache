@@ -1,8 +1,19 @@
 {
   "version": 2,
-  "dgSpecHash": "q5UbD4sTmlhX2c6+K76fRPRGNWBczavEAh8DOrajkjpucvVQVGgHqUbZSaa1yCg4ZL8zqVUWrgyRKv5681YsiQ==",
+  "dgSpecHash": "R3D1/kGzS1QW/GTJs3v4OJoftJnQgt1fciWied/YoL+w5cRQySTyMtwN2T47yqLYcAfpMK4zA4rAzCnsV3dSWw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime\\TgQueueTime\\TgQueueTime.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\anaas\\OneDrive\\Рабочий стол\\учеба2\\TgQueueTime\\TgQueueTime\\TgQueueTime.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\anaas\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\8.0.0\\microsoft.extensions.configuration.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\anaas\\.nuget\\packages\\microsoft.extensions.configuration.binder\\8.0.0\\microsoft.extensions.configuration.binder.8.0.0.nupkg.sha512",
+    "C:\\Users\\anaas\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.0\\microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\anaas\\.nuget\\packages\\microsoft.extensions.options\\8.0.0\\microsoft.extensions.options.8.0.0.nupkg.sha512",
+    "C:\\Users\\anaas\\.nuget\\packages\\microsoft.extensions.options.configurationextensions\\8.0.0\\microsoft.extensions.options.configurationextensions.8.0.0.nupkg.sha512",
+    "C:\\Users\\anaas\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
+    "C:\\Users\\anaas\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
+    "C:\\Users\\anaas\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512",
+    "C:\\Users\\anaas\\.nuget\\packages\\system.text.json\\8.0.5\\system.text.json.8.0.5.nupkg.sha512",
+    "C:\\Users\\anaas\\.nuget\\packages\\telegram.bot\\22.0.2\\telegram.bot.22.0.2.nupkg.sha512"
+  ],
   "logs": []
 }

@@ -1,3 +1,11 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using TgQueueTime.ClientBot;
 
-Console.WriteLine("Hello, World!");
+namespace TgQueueTime;
+
+class Program
+{
+    static async Task Main()
+    {
+        await StartClientBot.Run();
+    }
+}
