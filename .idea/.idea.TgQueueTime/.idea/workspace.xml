@@ -8,19 +8,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="65864a72-10b6-4edd-b55e-a5eefb9a693e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/TgQueueTime/OrganizationBot.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TgQueueTime/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TgQueueTime/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/CompanyBot.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/OrganizationBot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/OrganizationBot.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TgQueueTime/bin/Debug/net6.0/TgQueueTime.dll" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/bin/Debug/net6.0/TgQueueTime.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TgQueueTime/bin/Debug/net6.0/TgQueueTime.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/bin/Debug/net6.0/TgQueueTime.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.csproj.CoreCompileInputs.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.dll" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/ref/TgQueueTime.dll" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/ref/TgQueueTime.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/refint/TgQueueTime.dll" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/refint/TgQueueTime.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.model.nuget.info" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.restore.info" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,6 +57,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.appearance&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -106,8 +102,20 @@
       <workItem from="1730299308096" duration="1954000" />
       <workItem from="1730362016951" duration="2351000" />
       <workItem from="1730867459562" duration="1130000" />
-      <workItem from="1730898746746" duration="6401000" />
+      <workItem from="1730898746746" duration="6865000" />
+      <workItem from="1730907074908" duration="4037000" />
+      <workItem from="1730983145191" duration="485000" />
+      <workItem from="1730999466580" duration="2180000" />
     </task>
+    <task id="LOCAL-00001" summary="Обработка комманд /get_all_clients и /change_average_time">
+      <option name="closed" value="true" />
+      <created>1730905531473</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1730905531473</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -128,5 +136,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="Обработка комманд /get_all_clients и /change_average_time" />
+    <option name="LAST_COMMIT_MESSAGE" value="Обработка комманд /get_all_clients и /change_average_time" />
   </component>
 </project>
