@@ -19,6 +19,7 @@ public class Repository<T> : IRepository<T> where T : class
     public Repository(ApplicationDbContext context)
     {
         _context = context;
+        
     }
 
     public async Task AddAsync(T entity)

@@ -8,10 +8,19 @@ public class RepositoryTests
 {
     private ApplicationDbContext GetInMemoryDbContext()
     {
+        /*var basePath = AppDomain.CurrentDomain.BaseDirectory;
+        var dbPath = Path.Combine(basePath, "..", "..", "..", "Infrastructure", "Database", "Database.db");
+        dbPath = Path.GetFullPath(dbPath); // Получает абсолютный путь
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            //.UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .UseSqlite($"Data Source={dbPath};")
+            .Options;
+
+        return new ApplicationDbContext(options);*/
+        
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
-
         return new ApplicationDbContext(options);
     }
     
@@ -35,8 +44,7 @@ public class RepositoryTests
             OrganizationId = 1L
         };
         await serviceRepository.AddAsync(newService);
-        
-        var entityInDb = await context.Services.FindAsync(1L);
+        var entityInDb = await context.Set<ServiceEntity>().FindAsync(1L);
         Assert.NotNull(entityInDb);
         Assert.Equal("Test Service", entityInDb.Name);
     }
@@ -57,7 +65,6 @@ public class RepositoryTests
         var serviceRepository = new Repository<ServiceEntity>(context);
         var newService = new ServiceEntity
         {
-            Id = 1L,
             Name = "Test Service",
             AverageTime = "00:30:00",
             OrganizationId = 1L
@@ -67,7 +74,7 @@ public class RepositoryTests
         
         await serviceRepository.DeleteAsync(1L);
         
-        var entityInDb = await context.Set<ServiceEntity>().FindAsync(1L);
+        var entityInDb = await context.Set<ServiceEntity>().FindAsync(newService.Id);
         Assert.Null(entityInDb);
     }
 
@@ -86,7 +93,6 @@ public class RepositoryTests
         var serviceRepository = new Repository<ServiceEntity>(context);
         var newService = new ServiceEntity
         {
-            Id = 3L,
             Name = "Test Service",
             AverageTime = "00:30:00",
             OrganizationId = 1L
@@ -97,7 +103,7 @@ public class RepositoryTests
         newService.Name = "Updated Name";
         await serviceRepository.UpdateAsync(newService);
         
-        var entityInDb = await context.Set<ServiceEntity>().FindAsync(3L);
+        var entityInDb = await context.Set<ServiceEntity>().FindAsync(newService.Id);
         Assert.NotNull(entityInDb);
         Assert.Equal("Updated Name", entityInDb.Name);
     }
@@ -117,7 +123,6 @@ public class RepositoryTests
         var serviceRepository = new Repository<ServiceEntity>(context);
         var newService = new ServiceEntity
         {
-            Id = 4L,
             Name = "Existing Entity",
             AverageTime = "00:30:00",
             OrganizationId = 1L
@@ -125,7 +130,7 @@ public class RepositoryTests
         await serviceRepository.AddAsync(newService);
         await context.SaveChangesAsync();
         
-        var entityInDb = await serviceRepository.GetByIdAsync(4L);
+        var entityInDb = await serviceRepository.GetByIdAsync(newService.Id);
         
         Assert.NotNull(entityInDb);
         Assert.Equal("Existing Entity", entityInDb.Name);
@@ -134,14 +139,11 @@ public class RepositoryTests
     [Fact]
     public async Task GetByIdAsync_Should_Return_Null_If_Entity_Does_Not_Exist()
     {
-        // Arrange
         var context = GetInMemoryDbContext();
         var repository = new Repository<ServiceEntity>(context);
 
-        // Act
         var entityInDb = await repository.GetByIdAsync(5);
 
-        // Assert
         Assert.Null(entityInDb);
     }
 }

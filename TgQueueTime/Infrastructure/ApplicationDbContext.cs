@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 public class ApplicationDbContext : DbContext
 {
-    public DbSet<ServiceEntity> Services { get; set; }
 
     public ApplicationDbContext() { }
 
@@ -16,7 +15,12 @@ public class ApplicationDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
-            optionsBuilder.UseSqlite("Data Source=Infrastructure/Database/Database.db;");
+        {
+            var basePath = AppDomain.CurrentDomain.BaseDirectory;
+            var dbPath = Path.Combine(basePath, "..", "..", "..", "Infrastructure", "Database", "Database.db");
+            dbPath = Path.GetFullPath(dbPath);
+            optionsBuilder.UseSqlite($"Data Source={dbPath};");
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
