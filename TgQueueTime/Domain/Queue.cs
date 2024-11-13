@@ -1,4 +1,6 @@
-﻿namespace Domain;
+﻿using Infrastructure.Entities;
+
+namespace Domain;
 
 public class QueueItem
 {
@@ -14,7 +16,7 @@ public class QueueItem
     public TimeSpan TimeUntilServiceStart => ServiceStartTime - DateTime.Now;
 }
 
-public class DynamicQueue
+public class DynamicQueue: DomainService<DynamicQueue, QueueEntity>
 {
     public readonly List<QueueItem> Queue = new();
     public readonly List<Service> Services;

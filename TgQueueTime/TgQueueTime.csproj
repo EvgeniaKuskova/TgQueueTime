@@ -16,6 +16,7 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         <PrivateAssets>all</PrivateAssets>
       </PackageReference>
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
       <PackageReference Include="Moq" Version="4.20.72" />
       <PackageReference Include="xunit" Version="2.9.2" />
@@ -23,6 +24,12 @@
 
     <ItemGroup>
       <Folder Include="Infrastructure\Database\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Infrastructure\Database\Database.db">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

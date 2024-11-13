@@ -2,7 +2,7 @@
 using Domain;
 
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema; // перенести в Domain
 
 [Table("Organizations")]
 public class OrganizationEntity : EntityMapperBase<Organization, OrganizationEntity>
@@ -32,7 +32,6 @@ public class OrganizationEntity : EntityMapperBase<Organization, OrganizationEnt
         return new Organization(
             databaseEntity.Id,
             databaseEntity.Name,
-            new List<Service>(), // !!!!!!!!!!1
             databaseEntity.WindowCount
             );
     }

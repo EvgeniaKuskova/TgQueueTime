@@ -1,6 +1,8 @@
-﻿namespace Domain;
+﻿using Infrastructure.Entities;
 
-public class Service
+namespace Domain;
+
+public class Service:DomainService<Service, ServiceEntity>
 {
     public string Name;
     public TimeSpan AverageTime;

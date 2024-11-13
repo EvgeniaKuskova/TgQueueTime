@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Entities;
 
-public interface IEntityMapper<TDomainEntity, TDatabaseEntity>
+public interface IEntityMapper<TDomainEntity, TDatabaseEntity> // убрать вообще, чтобы не говорить, что у каждой таблицы есть сущность domain
 {
     TDatabaseEntity FromDomain(TDomainEntity domainEntity);
     TDomainEntity ToDomain(TDatabaseEntity databaseEntity, ApplicationDbContext context);

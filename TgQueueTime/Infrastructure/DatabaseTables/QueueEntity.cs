@@ -1,5 +1,4 @@
-﻿using Infrastructure.Repositories;
-
+﻿
 namespace Infrastructure.Entities;
 
 using Domain;
@@ -29,6 +28,6 @@ public class QueueEntity : EntityMapperBase<DynamicQueue, QueueEntity>
     public override DynamicQueue ToDomain(QueueEntity databaseEntity, ApplicationDbContext context)
     {
         // заглушка
-        return new DynamicQueue(new List<Service>(), new Organization(1L, "aboba", new List<Service>(), 1), 1) { };
+        return new DynamicQueue(new List<Service>(), new Organization(1L, "aboba", 1), 1) { };
     }
 }
