@@ -1,8 +1,8 @@
-﻿using Infrastructure.Entities;
+﻿using Domain.Entities;
 
 namespace Domain;
 
-public class Organization: DomainService<Organization, OrganizationEntity>
+public class Organization
 {
     public readonly long Id;
     public readonly string Name;

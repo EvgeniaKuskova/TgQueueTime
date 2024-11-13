@@ -1,8 +1,8 @@
-﻿using Infrastructure.Entities;
+﻿using Domain.Entities;
 
 namespace Domain;
 
-public class Client:DomainService<Client, QueueClientsEntity>
+public class Client
 {
     public long Id { get; }
     public Service Service;

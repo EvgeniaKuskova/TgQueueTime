@@ -1,11 +1,13 @@
-﻿namespace Infrastructure.Entities;
+﻿using Infrastructure;
+
+namespace Domain.Entities;
 using Domain;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema; // перенести в Domain
 
 [Table("Organizations")]
-public class OrganizationEntity : EntityMapperBase<Organization, OrganizationEntity>
+public class OrganizationEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -18,7 +20,7 @@ public class OrganizationEntity : EntityMapperBase<Organization, OrganizationEnt
     {
     }
 
-    public override OrganizationEntity FromDomain(Organization domainEntity)
+    public OrganizationEntity FromDomain(Organization domainEntity)
     {
         return new OrganizationEntity
         {
@@ -27,7 +29,7 @@ public class OrganizationEntity : EntityMapperBase<Organization, OrganizationEnt
         };
     }
 
-    public override Organization ToDomain(OrganizationEntity databaseEntity, ApplicationDbContext context)
+    public Organization ToDomain(OrganizationEntity databaseEntity, ApplicationDbContext context)
     {
         return new Organization(
             databaseEntity.Id,

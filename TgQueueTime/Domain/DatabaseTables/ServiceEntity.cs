@@ -1,10 +1,12 @@
-﻿namespace Infrastructure.Entities;
+﻿using Infrastructure;
+
+namespace Domain.Entities;
 using Domain;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 [Table("Services")]
-public class ServiceEntity : EntityMapperBase<Service, ServiceEntity>
+public class ServiceEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -20,7 +22,7 @@ public class ServiceEntity : EntityMapperBase<Service, ServiceEntity>
     {
     }
 
-    public override ServiceEntity FromDomain(Service domainEntity)
+    public ServiceEntity FromDomain(Service domainEntity)
     {
         return new ServiceEntity
         {
@@ -29,7 +31,7 @@ public class ServiceEntity : EntityMapperBase<Service, ServiceEntity>
         };
     }
 
-    public override Service ToDomain(ServiceEntity databaseEntity, ApplicationDbContext context)
+    public Service ToDomain(ServiceEntity databaseEntity, ApplicationDbContext context)
     {
         return new Service(
             databaseEntity.Name,

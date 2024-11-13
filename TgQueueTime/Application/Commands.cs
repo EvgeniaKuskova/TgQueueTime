@@ -1,38 +1,30 @@
 ﻿using Domain;
-using Infrastructure;
-using Infrastructure.Entities;
-using Microsoft.Extensions.DependencyInjection;
+using Domain.Services;
 
-namespace TgQueueTime.Application;
-
-public class Commands
+namespace TgQueueTime.Application
 {
-    public async Task RegisterOrganizationCommand(long idOrganization, string organizationName, int windowCount)
+    public class Commands
     {
-        var organization = new Organization(idOrganization, organizationName, windowCount);
-        //Service.RegisterOrg(org);
-        //RepositoryOrg.RegisterOrg(org);
-        //репозиторий - (сервис/хранилка) для каждой сущности
-        
-        
-        
-        /*var serviceProvider = Startup.ConfigureServices();
-        var domainService = serviceProvider.GetService<IDomain<Organization,OrganizationEntity>>();
-        await domainService.PutInDataBaseAsync(organization);*/
-    }
+        private readonly OrganizationService _organizationService;
+        private readonly QueueService _queueService;
 
-    void AddClientToQueueCommand(long idClient, string serviceName, string organizationName)
-    {
-        // заглушка
-    }
+        public Commands(OrganizationService organizationService, QueueService queueService)
+        {
+            _organizationService = organizationService;
+            _queueService = queueService;
+        }
 
-    void UpdateServiceAverageTimeCommand(long idOrganization, string serviceName, TimeSpan averageTime)
-    {
-        // заглушка
-    }
+        public async Task RegisterOrganizationCommand(long idOrganization, string organizationName, int windowCount)
+        {
+            var organization = new Organization(idOrganization, organizationName, windowCount);
+            await _organizationService.RegisterOrganizationAsync(organization);
+        }
 
-    void AddService(long idOrganization, string serviceName, TimeSpan averageTime, List<int> windowNumbers)
-    {
-        // заглушка
+        public async Task AddClientToQueueCommand(long idClient, string serviceName, string organizationName, int windowNumber)
+        {
+            var service = new Service(serviceName, TimeSpan.Zero); // здесь нужно достать из бд среднее время услуги
+            var client = new Client(idClient, service);
+            await _queueService.AddClientToQueueAsync(client, organizationName, windowNumber);
+        }
     }
 }

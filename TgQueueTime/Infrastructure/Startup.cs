@@ -1,11 +1,8 @@
-﻿using Domain;
-using Infrastructure.Entities;
-
-namespace Infrastructure;
-
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
+﻿using Domain.Services;
+using Infrastructure;
 using Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 public class Startup
 {
@@ -13,16 +10,14 @@ public class Startup
     {
         var services = new ServiceCollection();
 
-        // Настройка DbContext
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite("Data Source=Database.db"));
 
-        // Регистрация репозитория и маппера
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-        services.AddScoped(typeof(IEntityMapper<,>), typeof(EntityMapperBase<,>));
 
-        // Регистрация DomainService
-        services.AddScoped(typeof(IDomain<,>), typeof(DomainService<,>));
+        // Регистрация доменных сервисов
+        services.AddScoped<IQueueService, QueueService>();
+        services.AddScoped<IOrganizationService, OrganizationService>();
 
         return services.BuildServiceProvider();
     }
