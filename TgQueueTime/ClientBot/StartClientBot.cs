@@ -15,6 +15,7 @@ public class StartClientBot
 {
     private static ITelegramBotClient botClient;
     private static ReceiverOptions receiverOptions;
+    private static Dictionary<long, StateUser> ClientAndState = new Dictionary<long, StateUser>();
 
     public static async Task Run()
     {
@@ -52,11 +53,12 @@ public class StartClientBot
                 case UpdateType.Message:
                     var message = update.Message;
                     var chat = message.Chat;
-
+                    if (!ClientAndState.ContainsKey(chat.Id))
+                        ClientAndState[chat.Id] = StateUser.Input;
                     switch (message.Type)
                     {
                         case MessageType.Text:
-                            HandlerTextMessageText(botClient, message, chat);
+                            await HandlerTextMessageText(botClient, message, chat);
                             return;
                     }
 
@@ -93,13 +95,17 @@ public class StartClientBot
         switch (message.Text)
         {
             case "/start":
+                ClientAndState[chat.Id] = StateUser.Start;
                 await botClient.SendTextMessageAsync(chat.Id, startMessage);
                 return;
             case "/help":
                 await botClient.SendTextMessageAsync(chat.Id, helpMessage);
                 return;
             case "/register":
-                await botClient.SendTextMessageAsync(chat.Id, "регистрация");
+                ClientAndState[chat.Id] = StateUser.WaitingForNameOrganization;
+                string nameOrganization;
+                string nameService;
+                await botClient.SendTextMessageAsync(chat.Id, "Введите название организации");
                 return;
             case "/mytime":
                 await botClient.SendTextMessageAsync(chat.Id, "оставшееся время");
@@ -108,11 +114,37 @@ public class StartClientBot
                 await botClient.SendTextMessageAsync(chat.Id, "клиенты до меня");
                 return;
             case "/quitqueue":
+                ClientAndState[chat.Id] = StateUser.End;
                 await botClient.SendTextMessageAsync(chat.Id, "выйти из очереди");
                 return;
+            default:
+                if (ClientAndState[chat.Id] == StateUser.WaitingForNameOrganization)
+                {
+                    nameOrganization = message.Text;
+                    ClientAndState[chat.Id] = StateUser.WaitingForNameService;
+                    await botClient.SendTextMessageAsync(chat.Id, "Введите название услуги");
+                }
+                else if (ClientAndState[chat.Id] == StateUser.WaitingForNameService)
+                {
+                    nameService = message.Text;
+                    ClientAndState[chat.Id] = StateUser.EndRegistration;
+                    await botClient.SendTextMessageAsync(chat.Id, "Регистрация закончена");
+                    Console.WriteLine("передать регистрацию");
+                }
+                else
+                    await botClient.SendTextMessageAsync(chat.Id, "команда не найдена");
+                return;
         }
-        await botClient.SendTextMessageAsync(chat.Id, "команда не найдена");
-        return;
+    }
+
+    public enum StateUser
+    {
+        Input,
+        Start,
+        WaitingForNameOrganization,
+        WaitingForNameService,
+        EndRegistration,
+        End
     }
 }
 
