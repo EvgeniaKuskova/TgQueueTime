@@ -4,7 +4,8 @@
     {
         static async Task Main()
         {
-            await OrganizationBot.Run();
+           var organizationBot = new OrganizationBot("7547068208:AAHLfLIFPWMkZwgMmHscbL53f_Ul-Z6sCJI");
+           await organizationBot.Run();
         }
     }
 

@@ -8,14 +8,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="65864a72-10b6-4edd-b55e-a5eefb9a693e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/TgQueueTime/Command/BotCommand.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TgQueueTime/Command/ICommand.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TgQueueTime/Command/RegistrationOrganization.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TgQueueTime/OrganizationBot2.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TgQueueTime/UpdateHandler/IUpdateHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TgQueueTime/UpdateHandler/UpdateHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TgQueueTime/UpdateHandler/UserState.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TgQueueTime/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TgQueueTime/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TgQueueTime/OrganizationBot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/OrganizationBot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/bin/Debug/net6.0/TgQueueTime.dll" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/bin/Debug/net6.0/TgQueueTime.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/bin/Debug/net6.0/TgQueueTime.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/bin/Debug/net6.0/TgQueueTime.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.dll" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/ref/TgQueueTime.dll" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/ref/TgQueueTime.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/refint/TgQueueTime.dll" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/refint/TgQueueTime.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.model.nuget.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.restore.info" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,7 +46,9 @@
   &quot;associatedIndex&quot;: 1
 }</component>
   <component name="ProjectId" id="2o21dr4fWGi03TbdgjmPnxaj9T7" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -50,6 +56,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;.NET Project.TgQueueTime.executor&quot;: &quot;Run&quot;,
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;CompanyBot&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -106,6 +113,11 @@
       <workItem from="1730907074908" duration="4037000" />
       <workItem from="1730983145191" duration="485000" />
       <workItem from="1730999466580" duration="2180000" />
+      <workItem from="1731509363081" duration="2383000" />
+      <workItem from="1731515308557" duration="3816000" />
+      <workItem from="1731519276995" duration="2149000" />
+      <workItem from="1731578267110" duration="36000" />
+      <workItem from="1731758004079" duration="758000" />
     </task>
     <task id="LOCAL-00001" summary="Обработка комманд /get_all_clients и /change_average_time">
       <option name="closed" value="true" />
@@ -135,8 +147,10 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Обработка комманд /get_all_clients и /change_average_time" />
-    <option name="LAST_COMMIT_MESSAGE" value="Обработка комманд /get_all_clients и /change_average_time" />
+    <MESSAGE value="Добавила гитигнор, который скинул Кирилл" />
+    <option name="LAST_COMMIT_MESSAGE" value="Добавила гитигнор, который скинул Кирилл" />
   </component>
 </project>
