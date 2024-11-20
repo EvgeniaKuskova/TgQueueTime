@@ -9,5 +9,6 @@ public enum UserState
     WaitingForNumbersWindow,
     WaitingForAverageTimeUpdate,
     WaitingForNameServiceUpdate,
-    WaitingForNumberWindowGet
+    WaitingForNumberWindowGet,
+    WaitingForNumberWindowToAccept
 }

@@ -10,22 +10,24 @@ namespace TgQueueTime;
 public class UpdateHandler : IUpdateHandler
 {
     private readonly ITelegramBotClient _botClient;
-    private readonly Dictionary<long, UserState> userStates;
-    private readonly Dictionary<string, ICommand> botResponses;
-    private static readonly Dictionary<long, string> serviceAverageTimeUpdate = new();
-    private static readonly Dictionary<long, Dictionary<string, TimeSpan>> serviceAverageTime = new();
+    private readonly Dictionary<long, UserState> _userStates;
+    private readonly Dictionary<string, ICommand> _botResponses;
+    private readonly Dictionary<long, string> _serviceAverageTimeUpdate = new();
+    private readonly Dictionary<long, Dictionary<string, TimeSpan>> _serviceAverageTime = new();
+    private readonly Dictionary<UserState, ICommand> _stateCommands;
     
     public UpdateHandler(ITelegramBotClient botClient)
     {
         _botClient = botClient;
-        userStates = new Dictionary<long, UserState>();
-        botResponses = new Dictionary<string, ICommand>
+        _userStates = new Dictionary<long, UserState>();
+        _botResponses = new Dictionary<string, ICommand>
         {
             ["/menu"] = new BotCommand($"Список доступных команд:\n" +
                                        $"/registration - регистрация новой оганизации\n" +
                                        $"/add_service - добавить услугу в вашу оганизацию\n" +
                                        $"/get_all_clients - получить список всех клиентов в очереди\n" +
                                        $"/change_average_time - изменить среднее время для услуги\n" +
+                                       $"/accept_next_client - принять следующего клиента в окне\n" +
                                        $"/menu - вернуться в меню",
                 UserState.Start),
             ["/start"] = new BotCommand($"Добро пожаловать в панель управления электронной очередью TgQueueTime!\n" +
@@ -40,8 +42,22 @@ public class UpdateHandler : IUpdateHandler
                 UserState.WaitingForNumberWindowGet),
             ["/change_average_time"] = new BotCommand("Введите название услуги",
                 UserState.WaitingForNameServiceUpdate),
+            ["/accept_next_client"] = new BotCommand("Введите номер окна",
+                UserState.WaitingForNumberWindowToAccept),
             ["default"] = new BotCommand("Извините, я Вас не понимаю, вот список доступных команд /menu",
                 UserState.Start)
+        };
+
+        _stateCommands = new Dictionary<UserState, ICommand>
+        {
+            [UserState.WaitingForNameOrganization] = new RegisterOrganization(),
+            [UserState.WaitingForNameService] = new FixingServiceName(_serviceAverageTime),
+            [UserState.WaitingForAverageTime] = new FixingAverageTime(_serviceAverageTime),
+            [UserState.WaitingForNumbersWindow] = new RegisterService(_serviceAverageTime),
+            [UserState.WaitingForAverageTimeUpdate] = new UpdatingAverageTime(_serviceAverageTimeUpdate),
+            [UserState.WaitingForNameServiceUpdate] = new FixingNameServiceUpdate(_serviceAverageTimeUpdate),
+            [UserState.WaitingForNumberWindowGet] = new GettingAllClients(),
+            [UserState.WaitingForNumberWindowToAccept] = new AcceptingNextClient(),
         };
     }
 
@@ -53,62 +69,30 @@ public class UpdateHandler : IUpdateHandler
             var chatId = update.Message.Chat.Id;
             var messageText = update.Message.Text;
 
-            if (!userStates.ContainsKey(chatId))
+            if (!_userStates.ContainsKey(chatId))
             {
-                userStates[chatId] = UserState.Start;
+                _userStates[chatId] = UserState.Start;
             }
 
-            var userState = userStates[chatId];
+            var userState = _userStates[chatId];
             
             if (messageText == "/menu")
             {
-                await botResponses[messageText].ExecuteAsync(_botClient, chatId, userStates);
+                await _botResponses[messageText].ExecuteAsync(_botClient, chatId, _userStates, messageText);
                 return;
             }
-            
-            
-            switch (userState)
-            {
-                case UserState.WaitingForNameOrganization:
-                    await new RegisterOrganization().ExecuteAsync(_botClient, chatId, userStates);
-                    return;
-                
-                case UserState.WaitingForNameService:
-                    await new FixingServiceName(serviceAverageTime, messageText).ExecuteAsync(_botClient, chatId,
-                        userStates);
-                    break;
 
-                case UserState.WaitingForAverageTime:
-                    await new FixingAverageTime(serviceAverageTime, messageText).ExecuteAsync(_botClient, chatId,
-                        userStates);
-                    break;
-                
-                case UserState.WaitingForNumbersWindow:
-                    await new RegisterService(serviceAverageTime, messageText).ExecuteAsync(_botClient, chatId,
-                        userStates);
-                    break;
-                
-                case UserState.WaitingForAverageTimeUpdate:
-                    await new UpdatingAverageTime(serviceAverageTimeUpdate, messageText).ExecuteAsync(_botClient, chatId,
-                        userStates);
-                    break;
-                
-                case UserState.WaitingForNameServiceUpdate:
-                    await new FixingNameServiceUpdate(serviceAverageTimeUpdate, messageText).ExecuteAsync(_botClient, chatId,
-                        userStates);
-                    break;
-                
-                case UserState.WaitingForNumberWindowGet:
-                    await new GettingAllClients(messageText).ExecuteAsync(_botClient, chatId,
-                        userStates);
-                    break;
-                
-                default:
-                    if (botResponses.TryGetValue(messageText, out var command))
-                        await command.ExecuteAsync(_botClient, chatId, userStates);
-                    else
-                        await botResponses["default"].ExecuteAsync(_botClient, chatId, userStates);
-                    return;
+            if (userState == UserState.Start)
+            {
+                if (_botResponses.TryGetValue(messageText, out var command))
+                    await command.ExecuteAsync(_botClient, chatId, _userStates, messageText);
+                else
+                    await _botResponses["default"].ExecuteAsync(_botClient, chatId, _userStates, messageText);
+            }
+
+            else
+            {
+                await _stateCommands[userState].ExecuteAsync(_botClient, chatId, _userStates, messageText);
             }
         }
     }

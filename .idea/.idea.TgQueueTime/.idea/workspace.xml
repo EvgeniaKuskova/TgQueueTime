@@ -8,18 +8,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="65864a72-10b6-4edd-b55e-a5eefb9a693e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/TgQueueTime/Command/BotCommand.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TgQueueTime/Command/ICommand.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TgQueueTime/Command/RegistrationOrganization.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TgQueueTime/OrganizationBot2.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TgQueueTime/UpdateHandler/IUpdateHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TgQueueTime/UpdateHandler/UpdateHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TgQueueTime/UpdateHandler/UserState.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TgQueueTime/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TgQueueTime/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/OrganizationBot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/OrganizationBot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.model.nuget.info" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.restore.info" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,6 +25,9 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="mock://C:/Users/КусЯ/RiderProjects/TgQueueTime/TgQueueTime/Program.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -118,6 +110,8 @@
       <workItem from="1731519276995" duration="2149000" />
       <workItem from="1731578267110" duration="36000" />
       <workItem from="1731758004079" duration="758000" />
+      <workItem from="1731853895654" duration="7072000" />
+      <workItem from="1732100364608" duration="1226000" />
     </task>
     <task id="LOCAL-00001" summary="Обработка комманд /get_all_clients и /change_average_time">
       <option name="closed" value="true" />
@@ -127,7 +121,23 @@
       <option name="project" value="LOCAL" />
       <updated>1730905531473</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Попробовала разбить">
+      <option name="closed" value="true" />
+      <created>1731860143400</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1731860143400</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Попробовала разбить">
+      <option name="closed" value="true" />
+      <created>1731860240919</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1731860240919</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -151,6 +161,7 @@
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Обработка комманд /get_all_clients и /change_average_time" />
     <MESSAGE value="Добавила гитигнор, который скинул Кирилл" />
-    <option name="LAST_COMMIT_MESSAGE" value="Добавила гитигнор, который скинул Кирилл" />
+    <MESSAGE value="Попробовала разбить" />
+    <option name="LAST_COMMIT_MESSAGE" value="Попробовала разбить" />
   </component>
 </project>

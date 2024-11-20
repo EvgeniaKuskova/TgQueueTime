@@ -13,7 +13,8 @@ public class BotCommand : ICommand
         _nextState = nextState;
     }
 
-    public async Task ExecuteAsync(ITelegramBotClient botClient, long chatId, Dictionary<long, UserState> userStates)
+    public async Task ExecuteAsync(ITelegramBotClient botClient, long chatId, Dictionary<long, UserState> userStates, 
+        string messageText)
     {
         await botClient.SendTextMessageAsync(chatId, _response);
         userStates[chatId] = _nextState;
