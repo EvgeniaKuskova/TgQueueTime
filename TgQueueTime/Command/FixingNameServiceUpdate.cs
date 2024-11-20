@@ -21,4 +21,9 @@ public class FixingNameServiceUpdate: ICommand
         await botClient.SendTextMessageAsync(chatId, _response);
         userStates[chatId] = UserState.WaitingForAverageTimeUpdate;
     }
+
+    public bool Accept(UserState userState)
+    {
+        return userState == UserState.WaitingForNameServiceUpdate;
+    }
 }

@@ -24,7 +24,13 @@ public class UpdatingAverageTime: ICommand
         userStates[chatId] = UserState.Start;
         //var responce = UpdateServiceAverageTimeCommand(chat.Id, _serviceAverageTimeUpdate[chatId],
         //    new TimeSpan(0, minutes, 0));
+        //Console.WriteLine(_serviceAverageTimeUpdate[chatId]);
         await botClient.SendTextMessageAsync(chatId, _goodResponse);
         _serviceAverageTimeUpdate.Remove(chatId);
+    }
+
+    public bool Accept(UserState userState)
+    {
+        return userState == UserState.WaitingForAverageTimeUpdate;
     }
 }

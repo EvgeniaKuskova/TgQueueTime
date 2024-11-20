@@ -19,4 +19,9 @@ public class AcceptingNextClient: ICommand
         //var clients = GetAllClientsInQueueQuery(chat.Id, number);
         await botClient.SendTextMessageAsync(chatId, _goodResponse);
     }
+
+    public bool Accept(UserState userState)
+    {
+        return userState == UserState.WaitingForNumberWindowToAccept;
+    }
 }

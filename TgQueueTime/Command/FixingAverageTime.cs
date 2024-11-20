@@ -27,4 +27,9 @@ public class FixingAverageTime: ICommand
         await botClient.SendTextMessageAsync(chatId, _response);
         userStates[chatId] = UserState.WaitingForNumbersWindow;
     }
+
+    public bool Accept(UserState userState)
+    {
+        return userState == UserState.WaitingForAverageTime;
+    }
 }

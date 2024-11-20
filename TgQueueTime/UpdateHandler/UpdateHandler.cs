@@ -14,7 +14,7 @@ public class UpdateHandler : IUpdateHandler
     private readonly Dictionary<string, ICommand> _botResponses;
     private readonly Dictionary<long, string> _serviceAverageTimeUpdate = new();
     private readonly Dictionary<long, Dictionary<string, TimeSpan>> _serviceAverageTime = new();
-    private readonly Dictionary<UserState, ICommand> _stateCommands;
+    private readonly ICommand[] _commands;
     
     public UpdateHandler(ITelegramBotClient botClient)
     {
@@ -48,16 +48,16 @@ public class UpdateHandler : IUpdateHandler
                 UserState.Start)
         };
 
-        _stateCommands = new Dictionary<UserState, ICommand>
+        _commands = new ICommand[]
         {
-            [UserState.WaitingForNameOrganization] = new RegisterOrganization(),
-            [UserState.WaitingForNameService] = new FixingServiceName(_serviceAverageTime),
-            [UserState.WaitingForAverageTime] = new FixingAverageTime(_serviceAverageTime),
-            [UserState.WaitingForNumbersWindow] = new RegisterService(_serviceAverageTime),
-            [UserState.WaitingForAverageTimeUpdate] = new UpdatingAverageTime(_serviceAverageTimeUpdate),
-            [UserState.WaitingForNameServiceUpdate] = new FixingNameServiceUpdate(_serviceAverageTimeUpdate),
-            [UserState.WaitingForNumberWindowGet] = new GettingAllClients(),
-            [UserState.WaitingForNumberWindowToAccept] = new AcceptingNextClient(),
+            new RegisterOrganization(),
+            new FixingNameService(_serviceAverageTime),
+            new FixingAverageTime(_serviceAverageTime),
+            new RegisterService(_serviceAverageTime),
+            new UpdatingAverageTime(_serviceAverageTimeUpdate),
+            new FixingNameServiceUpdate(_serviceAverageTimeUpdate),
+            new GettingAllClients(),
+            new AcceptingNextClient(),
         };
     }
 
@@ -70,29 +70,19 @@ public class UpdateHandler : IUpdateHandler
             var messageText = update.Message.Text;
 
             if (!_userStates.ContainsKey(chatId))
-            {
                 _userStates[chatId] = UserState.Start;
-            }
 
             var userState = _userStates[chatId];
             
-            if (messageText == "/menu")
-            {
-                await _botResponses[messageText].ExecuteAsync(_botClient, chatId, _userStates, messageText);
-                return;
-            }
-
-            if (userState == UserState.Start)
-            {
-                if (_botResponses.TryGetValue(messageText, out var command))
-                    await command.ExecuteAsync(_botClient, chatId, _userStates, messageText);
-                else
-                    await _botResponses["default"].ExecuteAsync(_botClient, chatId, _userStates, messageText);
-            }
-
+            if (_botResponses.TryGetValue(messageText, out var command))
+                await command.ExecuteAsync(_botClient, chatId, _userStates, messageText);
+            else if (userState == UserState.Start)
+                await _botResponses["default"].ExecuteAsync(_botClient, chatId, _userStates, messageText);
             else
             {
-                await _stateCommands[userState].ExecuteAsync(_botClient, chatId, _userStates, messageText);
+                await _commands
+                    .First(x => x.Accept(userState))
+                    .ExecuteAsync(_botClient, chatId, _userStates, messageText);
             }
         }
     }

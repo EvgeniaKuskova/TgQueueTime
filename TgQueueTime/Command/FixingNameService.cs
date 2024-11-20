@@ -2,12 +2,12 @@
 
 namespace TgQueueTime.Command;
 
-public class FixingServiceName: ICommand
+public class FixingNameService: ICommand
 {
     private readonly Dictionary<long, Dictionary<string, TimeSpan>> _serviceAverageTime;
     private readonly string _response;
 
-    public FixingServiceName(Dictionary<long, Dictionary<string, TimeSpan>> serviceAverageTime)
+    public FixingNameService(Dictionary<long, Dictionary<string, TimeSpan>> serviceAverageTime)
     {
         _serviceAverageTime = serviceAverageTime;
         _response = "Продолжим, введите среднее время обслуживания одного клиента (в минутах). " +
@@ -23,5 +23,10 @@ public class FixingServiceName: ICommand
         };
         await botClient.SendTextMessageAsync(chatId, _response);
         userStates[chatId] = UserState.WaitingForAverageTime;
+    }
+
+    public bool Accept(UserState userState)
+    {
+        return userState == UserState.WaitingForNameService;
     }
 }

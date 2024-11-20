@@ -22,10 +22,16 @@ public class RegisterService: ICommand
             return;
         }
         var name = _serviceAverageTime[chatId].Keys.First();
-        //var responce = AddService(chat.Id, name, ServiceAverageTime[chat.Id][name],
+        //var responce = AddService(chat.Id, name, _serviceAverageTime[chatId][name],
         //    windows.Select(x => int.Parse(x)));
+        //Console.WriteLine(_serviceAverageTime[chatId][name]);
         await botClient.SendTextMessageAsync(chatId, _goodResponse);
         _serviceAverageTime.Remove(chatId);
         userStates[chatId] = UserState.Start;
+    }
+
+    public bool Accept(UserState userState)
+    {
+        return userState == UserState.WaitingForNumbersWindow;
     }
 }

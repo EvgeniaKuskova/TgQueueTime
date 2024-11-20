@@ -19,4 +19,9 @@ public class BotCommand : ICommand
         await botClient.SendTextMessageAsync(chatId, _response);
         userStates[chatId] = _nextState;
     }
+
+    public bool Accept(UserState userState)
+    {
+        return userState == UserState.Start;
+    }
 }

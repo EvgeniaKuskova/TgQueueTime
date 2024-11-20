@@ -9,6 +9,26 @@
   <component name="ChangeListManager">
     <list default="true" id="65864a72-10b6-4edd-b55e-a5eefb9a693e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TgQueueTime/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TgQueueTime/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/Command/AcceptingNextClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/Command/AcceptingNextClient.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/Command/BotCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/Command/BotCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/Command/FixingAverageTime.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/Command/FixingAverageTime.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/Command/FixingNameServiceUpdate.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/Command/FixingNameServiceUpdate.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/Command/FixingServiceName.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/Command/FixingNameService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/Command/GettingAllClients.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/Command/GettingAllClients.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/Command/ICommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/Command/ICommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/Command/RegisterOrganization.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/Command/RegisterOrganization.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/Command/RegisterService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/Command/RegisterService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/Command/UpdatingAverageTime.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/Command/UpdatingAverageTime.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/UpdateHandler/UpdateHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/UpdateHandler/UpdateHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/bin/Debug/net6.0/TgQueueTime.dll" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/bin/Debug/net6.0/TgQueueTime.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/bin/Debug/net6.0/TgQueueTime.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/bin/Debug/net6.0/TgQueueTime.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.dll" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/ref/TgQueueTime.dll" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/ref/TgQueueTime.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/refint/TgQueueTime.dll" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/refint/TgQueueTime.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.model.nuget.info" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,7 +47,10 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock://C:/Users/КусЯ/RiderProjects/TgQueueTime/TgQueueTime/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/b756d57b94fb4ab9aa95a9b2a97fce1fa24ea0/f2/ad3caa16/CancellationTokenSource.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f7f5b6da3f0f47d887266c4b9af5c2495fc00/91/6ce4dc52/TelegramBotClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5280f44993dc1d4d899063c281259ce7244f52e7081626ed7b3d66596b78a17/Update.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/КусЯ/RiderProjects/TgQueueTime/TgQueueTime/Command/AcceptingNextClient.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -112,6 +135,8 @@
       <workItem from="1731758004079" duration="758000" />
       <workItem from="1731853895654" duration="7072000" />
       <workItem from="1732100364608" duration="1226000" />
+      <workItem from="1732104099540" duration="4934000" />
+      <workItem from="1732114962798" duration="1315000" />
     </task>
     <task id="LOCAL-00001" summary="Обработка комманд /get_all_clients и /change_average_time">
       <option name="closed" value="true" />
@@ -137,7 +162,23 @@
       <option name="project" value="LOCAL" />
       <updated>1731860240919</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="ура, нет switch case">
+      <option name="closed" value="true" />
+      <created>1732106695836</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1732106695836</updated>
+    </task>
+    <task id="LOCAL-00005" summary="а еще я когда нибудь научусь не пушить токены в публичную репу">
+      <option name="closed" value="true" />
+      <created>1732106791729</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1732106791729</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -162,6 +203,8 @@
     <MESSAGE value="Обработка комманд /get_all_clients и /change_average_time" />
     <MESSAGE value="Добавила гитигнор, который скинул Кирилл" />
     <MESSAGE value="Попробовала разбить" />
-    <option name="LAST_COMMIT_MESSAGE" value="Попробовала разбить" />
+    <MESSAGE value="ура, нет switch case" />
+    <MESSAGE value="а еще я когда нибудь научусь не пушить токены в публичную репу" />
+    <option name="LAST_COMMIT_MESSAGE" value="а еще я когда нибудь научусь не пушить токены в публичную репу" />
   </component>
 </project>
