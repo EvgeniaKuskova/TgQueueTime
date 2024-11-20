@@ -15,7 +15,7 @@ namespace Infrastructure
         public DbSet<OrganizationEntity> Organizations { get; set; }
         public DbSet<ServiceEntity> Services { get; set; }
         public DbSet<QueueEntity> Queues { get; set; }
-        public DbSet<QueueClientsEntity> QueueClients { get; set; }
+        public DbSet<ClientsEntity> Clients { get; set; }
         public DbSet<QueueServicesEntity> QueueServices { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -48,9 +48,63 @@ namespace Infrastructure
                 .HasOne<OrganizationEntity>()
                 .WithMany()
                 .HasForeignKey(s => s.OrganizationId);
+            
+            // Настройка сущности OrganizationEntity
+            modelBuilder.Entity<OrganizationEntity>()
+                .HasKey(s => s.Id);
 
-            // Настройка других сущностей аналогичным образом
-            // ...
+            modelBuilder.Entity<OrganizationEntity>()
+                .Property(s => s.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+            
+            // Настройка сущности QueueEntity
+            modelBuilder.Entity<QueueEntity>()
+                .HasKey(s => s.Id);
+            
+            modelBuilder.Entity<QueueEntity>()
+                .Property(s => s.WindowNumber)
+                .IsRequired();
+
+            modelBuilder.Entity<QueueEntity>()
+                .HasOne<OrganizationEntity>()
+                .WithMany()
+                .HasForeignKey(s => s.OrganizationId);
+            
+            // Настройка сущности ClientsEntity
+            modelBuilder.Entity<ClientsEntity>()
+                .HasKey(s => s.Id);
+            
+            modelBuilder.Entity<ClientsEntity>()
+                .Property(s => s.UserId)
+                .IsRequired();
+            
+            modelBuilder.Entity<ClientsEntity>()
+                .Property(s => s.Position)
+                .IsRequired();
+
+            modelBuilder.Entity<ClientsEntity>()
+                .Property(s => s.StartTime);
+            
+            modelBuilder.Entity<ClientsEntity>()
+                .HasOne<QueueServicesEntity>()
+                .WithMany()
+                .HasForeignKey(s => s.QueueServiceId);
+            
+            // Настройка сущности QueueServicesEntity
+            modelBuilder.Entity<QueueServicesEntity>()
+                .HasKey(s => s.Id);
+            
+            modelBuilder.Entity<QueueServicesEntity>()
+                .HasOne<QueueEntity>()
+                .WithMany()
+                .HasForeignKey(s => s.QueueId);
+            
+            modelBuilder.Entity<QueueServicesEntity>()
+                .HasOne<ServiceEntity>()
+                .WithMany()
+                .HasForeignKey(s => s.ServiceId);
+
         }
     }
 }

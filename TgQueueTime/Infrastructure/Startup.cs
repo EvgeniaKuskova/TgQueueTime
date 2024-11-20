@@ -1,24 +1,23 @@
-﻿using Domain.Services;
+﻿using Domain.Entities;
+using Domain.Services;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using TgQueueTime.Application;
 
 public class Startup
 {
-    public static ServiceProvider ConfigureServices()
+    public void ConfigureServices(IServiceCollection services)
     {
-        var services = new ServiceCollection();
-
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlite("Data Source=Database.db"));
-
+            options.UseSqlite("Data Source=Infrastructure/Database/Database.db"));
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
-        // Регистрация доменных сервисов
-        services.AddScoped<IQueueService, QueueService>();
-        services.AddScoped<IOrganizationService, OrganizationService>();
-
-        return services.BuildServiceProvider();
+        
+        services.AddScoped<OrganizationService>();
+        services.AddScoped<QueueService>();
+        
+        services.AddScoped<Commands>();
+        services.AddScoped<Queries>();
     }
 }

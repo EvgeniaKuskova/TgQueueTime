@@ -1,48 +1,169 @@
-﻿using Domain.Entities;
+﻿using Domain;
+using Domain.Entities;
+using Domain.Services;
 using Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 
-namespace Domain.Services
+namespace Domain.Services;
+
+public class QueueService : IQueueService
 {
-    public class QueueService : IQueueService
+    private readonly IRepository<QueueEntity> _queueRepository;
+    private readonly IRepository<QueueServicesEntity> _queueServicesRepository;
+    private readonly IRepository<ClientsEntity> _clientRepository;
+    private readonly IRepository<OrganizationEntity> _organizationRepository;
+    private readonly IRepository<ServiceEntity> _serviceRepository;
+
+    public QueueService(
+        IRepository<QueueEntity> queueRepository,
+        IRepository<QueueServicesEntity> queueServicesRepository,
+        IRepository<ClientsEntity> clientRepository,
+        IRepository<OrganizationEntity> organizationRepository,
+        IRepository<ServiceEntity> serviceRepository)
     {
-        private readonly IRepository<QueueEntity> _queueRepository;
-        private readonly IRepository<QueueClientsEntity> _clientRepository;
-        private readonly IRepository<OrganizationEntity> _organizationRepository;
+        _queueRepository = queueRepository;
+        _clientRepository = clientRepository;
+        _organizationRepository = organizationRepository;
+        _queueServicesRepository = queueServicesRepository;
+        _serviceRepository = serviceRepository;
+    }
 
-        public QueueService(
-            IRepository<QueueEntity> queueRepository,
-            IRepository<QueueClientsEntity> clientRepository,
-            IRepository<OrganizationEntity> organizationRepository)
+    public async Task AddClientToQueueAsync(Client client, Organization organization)
+    {
+        // Найти ServiceEntity по имени услуги и ID организации
+        var serviceEntity = await _serviceRepository.GetByConditionsAsync(
+            s => s.Name == client.Service.Name && s.OrganizationId == organization.Id);
+
+        if (serviceEntity == null)
         {
-            _queueRepository = queueRepository;
-            _clientRepository = clientRepository;
-            _organizationRepository = organizationRepository;
+            throw new InvalidOperationException(
+                $"Услуга '{client.Service.Name}' не найдена в организации '{organization.Name}'.");
         }
 
-        public async Task AddClientToQueueAsync(Client client, string organizationName, int windowNumber)
+        // Получаем все QueueServicesEntity, связанные с найденной услугой
+        var queueServices = await _queueServicesRepository
+            .GetAllByCondition(qs => qs.ServiceId == serviceEntity.Id)
+            .ToListAsync();
+
+
+        if (!queueServices.Any())
         {
-            // добавить клиента в очередь в бд
+            throw new InvalidOperationException(
+                $"Нет очередей, предоставляющих услугу '{client.Service.Name}' в организации '{organization.Name}'.");
         }
 
-        public async Task CreateQueueAsync(Organization organization, int windowNumber)
+        // Получаем все очереди для данной организации
+        var queues = await _queueRepository
+            .GetAllByValueAsync(q => q.OrganizationId, organization.Id)
+            .ToListAsync();
+
+        if (!queues.Any())
         {
-            // добавить очередь в базу данных
+            throw new InvalidOperationException($"Для организации с ID {organization.Id} не найдено очередей.");
+        }
+
+        // Фильтруем очереди, которые предоставляют услугу клиента
+        var relevantQueues = queues.Where(q => queueServices.Any(qs => qs.QueueId == q.Id)).ToList();
+
+        if (!relevantQueues.Any())
+        {
+            throw new InvalidOperationException(
+                $"Нет очередей, предоставляющих услугу '{client.Service.Name}' в организации '{organization.Name}'.");
+        }
+
+        // Вычисляем оптимальную очередь
+        QueueEntity optimalQueue = null;
+        DateTime optimalStartTime = DateTime.MaxValue;
+
+        foreach (var queue in relevantQueues)
+        {
+            // Получаем всех клиентов в очереди
+            var clientsInQueue = await _clientRepository
+                .GetAllByValueAsync(c => c.QueueId, queue.Id)
+                .ToListAsync();
+
+            // Находим последнего клиента, который начал обслуживание
+            var lastStartedClient = clientsInQueue
+                .Where(c => !string.IsNullOrEmpty(c.StartTime))
+                .OrderByDescending(c => c.Position)
+                .FirstOrDefault();
+
+            DateTime queueStartTime;
+
+            if (lastStartedClient != null)
+            {
+                // Клиент уже обслуживается: его StartTime + AverageTime
+                var lastServiceId = queueServices.First(qs => qs.QueueId == queue.Id).ServiceId;
+                var lastService = await _serviceRepository.GetByIdAsync(lastServiceId);
+
+                // Парсим StartTime в TimeSpan
+                var startTime = DateTime.Parse(lastStartedClient.StartTime);
+                queueStartTime = startTime + TimeSpan.Parse(lastService.AverageTime);
+            }
+            else
+            {
+                // Очередь пустая или никто не начал обслуживание
+                queueStartTime = DateTime.Now;
+            }
+
+           // Прибавляем время для всех остальных клиентов в очереди
+            foreach (var clientInQueue in clientsInQueue.Where(c => c.Position > (lastStartedClient?.Position ?? 0)))
+            {
+                var clientServiceId = queueServices.First(qs => qs.QueueId == queue.Id).ServiceId;
+                var clientService = await _serviceRepository.GetByIdAsync(clientServiceId);
+
+                queueStartTime += TimeSpan.Parse(clientService.AverageTime);
+            }
+
+            // Проверяем, является ли эта очередь более оптимальной
+            if (queueStartTime < optimalStartTime)
+            {
+                optimalStartTime = queueStartTime;
+                optimalQueue = queue;
+            }
+
+
+            if (optimalQueue == null)
+            {
+                throw new InvalidOperationException(
+                    $"Не удалось найти оптимальную очередь для клиента в организации '{organization.Name}'.");
+            }
+
+            // Добавляем клиента в оптимальную очередь
+            var clientEntity = new ClientsEntity
+            {
+                QueueId = optimalQueue.Id,
+                UserId = client.Id,
+                Position = await _clientRepository
+                    .GetAllByValueAsync(c => c.QueueId, optimalQueue.Id)
+                    .CountAsync() + 1,
+                StartTime = null,
+                QueueServiceId = queueServices.First(qs => qs.QueueId == optimalQueue.Id).Id // Устанавливаем существующий QueueServiceId
+            };
+
+
+            await _clientRepository.AddAsync(clientEntity);
         }
     }
 
-    public class OrganizationService : IOrganizationService
+    public Task CreateQueueAsync(Organization organization, int windowNumber)
     {
-        private readonly IRepository<OrganizationEntity> _organizationRepository;
+        throw new NotImplementedException(); //!!!!!!!!!!!!!!!!
+    }
+}
 
-        public OrganizationService(IRepository<OrganizationEntity> organizationRepository)
-        {
-            _organizationRepository = organizationRepository;
-        }
+public class OrganizationService : IOrganizationService
+{
+    private readonly IRepository<OrganizationEntity> _organizationRepository;
 
-        public async Task RegisterOrganizationAsync(Organization organization)
-        {
-            var entity = new OrganizationEntity().FromDomain(organization);
-            await _organizationRepository.AddAsync(entity);
-        }
+    public OrganizationService(IRepository<OrganizationEntity> organizationRepository)
+    {
+        _organizationRepository = organizationRepository;
+    }
+
+    public async Task RegisterOrganizationAsync(Organization organization)
+    {
+        var entity = new OrganizationEntity().FromDomain(organization);
+        await _organizationRepository.AddAsync(entity);
     }
 }

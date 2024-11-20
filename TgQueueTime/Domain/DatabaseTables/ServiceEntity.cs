@@ -31,10 +31,10 @@ public class ServiceEntity
         };
     }
 
-    public Service ToDomain(ServiceEntity databaseEntity, ApplicationDbContext context)
+    public Service ToDomain()
     {
         return new Service(
-            databaseEntity.Name,
-            TimeSpan.Parse(databaseEntity.AverageTime));
+            this.Name,
+            TimeSpan.Parse(this.AverageTime));
     }
 }

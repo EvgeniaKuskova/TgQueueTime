@@ -31,8 +31,7 @@ public class RepositoryTests
         var organizationRepository = new Repository<OrganizationEntity>(context);
         var newOrganization = new OrganizationEntity
         {
-            Name = "Test Organization",
-            WindowCount = 3
+            Name = "Test Organization"
         };
         await organizationRepository.AddAsync(newOrganization);
         
@@ -57,8 +56,7 @@ public class RepositoryTests
         var organizationRepository = new Repository<OrganizationEntity>(context);
         var newOrganization = new OrganizationEntity
         {
-            Name = "Test Organization",
-            WindowCount = 3
+            Name = "Test Organization"
         };
         await organizationRepository.AddAsync(newOrganization);
         
@@ -85,8 +83,7 @@ public class RepositoryTests
         var organizationRepository = new Repository<OrganizationEntity>(context);
         var newOrganization = new OrganizationEntity
         {
-            Name = "Test Organization",
-            WindowCount = 3
+            Name = "Test Organization"
         };
         await organizationRepository.AddAsync(newOrganization);
         
@@ -115,8 +112,7 @@ public class RepositoryTests
         var organizationRepository = new Repository<OrganizationEntity>(context);
         var newOrganization = new OrganizationEntity
         {
-            Name = "Test Organization",
-            WindowCount = 3
+            Name = "Test Organization"
         };
         await organizationRepository.AddAsync(newOrganization);
         

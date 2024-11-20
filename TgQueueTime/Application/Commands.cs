@@ -1,30 +1,52 @@
 ﻿using Domain;
+using Domain.Entities;
 using Domain.Services;
+using Infrastructure.Repositories;
 
-namespace TgQueueTime.Application
+namespace TgQueueTime.Application;
+
+public class Commands
 {
-    public class Commands
+    private readonly OrganizationService _organizationService;
+    private readonly QueueService _queueService;
+    private readonly IRepository<OrganizationEntity> _organizationRepository;
+    private readonly IRepository<ServiceEntity> _serviceRepository;
+
+    public Commands(OrganizationService organizationService, QueueService queueService,
+        IRepository<OrganizationEntity> organizationRepository,
+        IRepository<ServiceEntity> serviceRepository)
     {
-        private readonly OrganizationService _organizationService;
-        private readonly QueueService _queueService;
+        _organizationService = organizationService;
+        _queueService = queueService;
+        _organizationRepository = organizationRepository;
+        _serviceRepository = serviceRepository;
+    }
 
-        public Commands(OrganizationService organizationService, QueueService queueService)
+    public async Task RegisterOrganizationCommand(long idOrganization, string organizationName)
+    {
+        var organization = new Organization(idOrganization, organizationName);
+        await _organizationService.RegisterOrganizationAsync(organization);
+    }
+
+    public async Task AddClientToQueueCommand(long idClient, string serviceName, string organizationName)
+    {
+        var organizationEntity = await _organizationRepository.GetByConditionsAsync(o => o.Name == organizationName);
+        if (organizationEntity == null)
         {
-            _organizationService = organizationService;
-            _queueService = queueService;
+            throw new InvalidOperationException($"Организация с именем {organizationName} не найдена.");
         }
 
-        public async Task RegisterOrganizationCommand(long idOrganization, string organizationName, int windowCount)
+        var organization = organizationEntity.ToDomain(_serviceRepository);
+        var serviceEntity = await _serviceRepository.GetByConditionsAsync(
+            s => s.Name == serviceName && s.OrganizationId == organization.Id);
+        if (serviceEntity == null)
         {
-            var organization = new Organization(idOrganization, organizationName, windowCount);
-            await _organizationService.RegisterOrganizationAsync(organization);
+            throw new InvalidOperationException(
+                $"Услуга '{serviceName}' не найдена в организации '{organizationEntity.Name}'.");
         }
-
-        public async Task AddClientToQueueCommand(long idClient, string serviceName, string organizationName, int windowNumber)
-        {
-            var service = new Service(serviceName, TimeSpan.Zero); // здесь нужно достать из бд среднее время услуги
-            var client = new Client(idClient, service);
-            await _queueService.AddClientToQueueAsync(client, organizationName, windowNumber);
-        }
+        
+        var service = new Service(serviceEntity.Name, TimeSpan.Parse(serviceEntity.AverageTime));
+        var client = new Client(idClient, service);
+        await _queueService.AddClientToQueueAsync(client, organization);
     }
 }

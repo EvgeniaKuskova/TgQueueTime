@@ -1,5 +1,6 @@
 ﻿
 using Infrastructure;
+using Infrastructure.Repositories;
 
 namespace Domain.Entities;
 
@@ -27,20 +28,33 @@ public class QueueEntity
         };
     }
 
-    public DynamicQueue ToDomain(QueueEntity databaseEntity, ApplicationDbContext context)
+    public DynamicQueue ToDomain(IRepository<OrganizationEntity> organizationRepository, IRepository<QueueServicesEntity> queueServicesRepository, IRepository<ServiceEntity> serviceRepository)
     {
-        var organizationEntity = context.Organizations.Find(databaseEntity.OrganizationId);
-        var organization = new OrganizationEntity().ToDomain(organizationEntity, context);
+        // Получаем организацию
+        var organizationEntity = organizationRepository.GetByIdAsync(this.OrganizationId).Result; // Для упрощения, но лучше использовать async/await
+        if (organizationEntity == null)
+        {
+            throw new InvalidOperationException($"Organization with ID {this.OrganizationId} not found.");
+        }
 
-        // Получаем связанные услуги
-        var serviceEntities = context.QueueServices
-            .Where(qs => qs.QueueId == databaseEntity.Id)
-            .Select(qs => context.Services.Find(qs.ServiceId))
+        var organization = organizationEntity.ToDomain(serviceRepository);
+
+        // Получаем услуги, связанные с этой очередью
+        var queueServices = queueServicesRepository
+            .GetAllByValueAsync(qs => qs.QueueId, this.Id)
+            .ToList(); 
+
+        var serviceIds = queueServices.Select(qs => qs.ServiceId).ToList();
+        var serviceEntities = serviceRepository
+            .GetAllByCondition(s => serviceIds.Contains(s.Id))
+            .ToList(); 
+
+        var services = serviceEntities
+            .Select(se => new ServiceEntity().ToDomain())
             .ToList();
 
-        var services = serviceEntities.Select(se => new ServiceEntity().ToDomain(se, context)).ToList();
-
-        return new DynamicQueue(services, organization, databaseEntity.WindowNumber);
+        return new DynamicQueue(services, organization, this.WindowNumber);
     }
+
 
 }
