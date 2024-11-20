@@ -151,19 +151,3 @@ public class QueueService : IQueueService
         throw new NotImplementedException(); //!!!!!!!!!!!!!!!!
     }
 }
-
-public class OrganizationService : IOrganizationService
-{
-    private readonly IRepository<OrganizationEntity> _organizationRepository;
-
-    public OrganizationService(IRepository<OrganizationEntity> organizationRepository)
-    {
-        _organizationRepository = organizationRepository;
-    }
-
-    public async Task RegisterOrganizationAsync(Organization organization)
-    {
-        var entity = new OrganizationEntity().FromDomain(organization);
-        await _organizationRepository.AddAsync(entity);
-    }
-}
