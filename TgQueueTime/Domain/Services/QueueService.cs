@@ -106,7 +106,7 @@ public class QueueService : IQueueService
                 queueStartTime = DateTime.Now;
             }
 
-           // Прибавляем время для всех остальных клиентов в очереди
+            // Прибавляем время для всех остальных клиентов в очереди
             foreach (var clientInQueue in clientsInQueue.Where(c => c.Position > (lastStartedClient?.Position ?? 0)))
             {
                 var clientServiceId = queueServices.First(qs => qs.QueueId == queue.Id).ServiceId;
@@ -138,7 +138,9 @@ public class QueueService : IQueueService
                     .GetAllByValueAsync(c => c.QueueId, optimalQueue.Id)
                     .CountAsync() + 1,
                 StartTime = null,
-                QueueServiceId = queueServices.First(qs => qs.QueueId == optimalQueue.Id).Id // Устанавливаем существующий QueueServiceId
+                QueueServiceId =
+                    queueServices.First(qs => qs.QueueId == optimalQueue.Id)
+                        .Id // Устанавливаем существующий QueueServiceId
             };
 
 
@@ -149,5 +151,54 @@ public class QueueService : IQueueService
     public Task CreateQueueAsync(Organization organization, int windowNumber)
     {
         throw new NotImplementedException(); //!!!!!!!!!!!!!!!!
+    }
+
+    public async Task<TimeSpan> GetClientTimeQuery(ClientsEntity client)
+    {
+        var queueServiceEntity = await _queueServicesRepository.GetByIdAsync(client.QueueServiceId);
+        var queueId = queueServiceEntity.QueueId;
+
+        var clientsInQueue = await _clientRepository
+            .GetAllByValueAsync(c => c.QueueId, queueId)
+            .OrderBy(c => c.Position) // Упорядочиваем по позиции
+            .ToListAsync();
+
+        // Находим последнего клиента, который начал обслуживание
+        var lastStartedClient = clientsInQueue
+            .Where(c => !string.IsNullOrEmpty(c.StartTime))
+            .OrderByDescending(c => c.Position)
+            .FirstOrDefault();
+
+        if (lastStartedClient == null)
+        {
+            // Очередь пустая или никто не начал обслуживание
+            return TimeSpan.Zero;
+        }
+
+        // Время начала обслуживания последнего клиента
+        var lastClientStartTime = DateTime.Parse(lastStartedClient.StartTime);
+
+        // Время, прошедшее с начала обслуживания последнего клиента
+        var timeElapsed = DateTime.Now - lastClientStartTime;
+
+        var lastClientServiceEntity = await _serviceRepository.GetByIdAsync(queueServiceEntity.ServiceId);
+        var lastClientServiceAverageTime = TimeSpan.Parse(lastClientServiceEntity.AverageTime);
+
+        // Оставшееся время на обслуживание последнего клиента
+        var remainingTimeForLastClient = lastClientServiceAverageTime - timeElapsed;
+
+        var totalWaitTime = remainingTimeForLastClient > TimeSpan.Zero
+            ? remainingTimeForLastClient
+            : TimeSpan.Zero;
+
+        foreach (var clientInQueue in clientsInQueue.Where(c => c.Position > client.Position))
+        {
+            var clientServiceEntity = await _serviceRepository.GetByIdAsync(clientInQueue.QueueServiceId);
+            var clientServiceAverageTime = TimeSpan.Parse(clientServiceEntity.AverageTime);
+
+            totalWaitTime += clientServiceAverageTime;
+        }
+
+        return totalWaitTime;
     }
 }
