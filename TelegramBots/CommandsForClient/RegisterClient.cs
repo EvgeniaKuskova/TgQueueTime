@@ -16,7 +16,6 @@ public class RegisterClient : ICommand
     {
         _organization[chatId] = messageText;
         await botClient.SendTextMessageAsync(chatId, "Введите название услуги");
-        await botClient.SendTextMessageAsync(chatId, _organization[chatId]);
         userStates[chatId] = UserState.WaitingClientForNameService;
     }
 

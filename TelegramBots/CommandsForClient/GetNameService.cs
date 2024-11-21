@@ -17,7 +17,6 @@ public class GetNameService : ICommand
         var nameService = messageText;
         //AddClientToQueueCommand(chatId, nameService, _organization[chatId]);
         await botClient.SendTextMessageAsync(chatId, "Вы зарегистрированы");
-        await botClient.SendTextMessageAsync(chatId, _organization[chatId]);
         userStates[chatId] = UserState.ClientStart;
     }
 
