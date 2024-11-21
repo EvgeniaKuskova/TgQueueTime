@@ -129,7 +129,7 @@ public class StartClientBot
                     nameService = message.Text;
                     ClientAndState[chat.Id] = StateUser.EndRegistration;
                     await botClient.SendTextMessageAsync(chat.Id, "Регистрация закончена");
-                    Console.WriteLine("передать регистрацию");
+                    Console.WriteLine("передать в регистрацию nameOrganization и nameService");
                 }
                 else
                     await botClient.SendTextMessageAsync(chat.Id, "команда не найдена");
