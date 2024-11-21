@@ -10,5 +10,11 @@ public enum UserState
     WaitingForAverageTimeUpdate,
     WaitingForNameServiceUpdate,
     WaitingForNumberWindowGet,
-    WaitingForNumberWindowToAccept
+    WaitingForNumberWindowToAccept,
+
+    ClientStart,
+    WaitingClientForNameOrganization,
+    WaitingClientForNameService,
+    WaitingClientForMyTime,
+    WaitingClientForCountClientsBefore,
 }

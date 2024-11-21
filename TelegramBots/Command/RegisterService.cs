@@ -25,6 +25,7 @@ public class RegisterService: ICommand
         //var responce = AddService(chat.Id, name, _serviceAverageTime[chatId][name],
         //    windows.Select(x => int.Parse(x)));
         await botClient.SendTextMessageAsync(chatId, _goodResponse);
+        await botClient.SendTextMessageAsync(chatId, _serviceAverageTime[chatId][name].ToString());
         _serviceAverageTime.Remove(chatId);
         userStates[chatId] = UserState.Start;
     }
