@@ -33,6 +33,6 @@ public class OrganizationEntity
 
         return new Organization(this.Id, this.Name, domainServices);
     }
-
+    
 
 }

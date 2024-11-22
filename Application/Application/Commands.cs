@@ -1,7 +1,6 @@
 ﻿using Domain;
 using Domain.Entities;
 using Domain.Services;
-using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace TgQueueTime.Application;

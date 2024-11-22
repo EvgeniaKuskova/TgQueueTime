@@ -28,11 +28,4 @@ public class ServiceEntity
             AverageTime = domainEntity.AverageTime.ToString()
         };
     }
-
-    public Service ToDomain()
-    {
-        return new Service(
-            this.Name,
-            TimeSpan.Parse(this.AverageTime));
-    }
 }

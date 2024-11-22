@@ -2,6 +2,7 @@
 using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using TgQueueTime.Application;
 using Xunit;
 
 namespace Domain.Services;

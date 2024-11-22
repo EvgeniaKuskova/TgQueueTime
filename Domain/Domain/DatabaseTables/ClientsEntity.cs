@@ -28,29 +28,5 @@ public class ClientsEntity
             StartTime = domainEntity.Service.AverageTime.TotalMinutes.ToString()
         };
     }
-
-    public Client ToDomain(IRepository<QueueServicesEntity> queueServicesRepository, IRepository<ServiceEntity> serviceRepository)
-    {
-        // Получаем связь QueueServiceEntity
-        var queueServiceEntity = queueServicesRepository.GetByIdAsync(this.QueueServiceId).Result;
-        if (queueServiceEntity == null)
-        {
-            throw new InvalidOperationException($"QueueService with ID {this.QueueServiceId} not found.");
-        }
-
-        // Получаем связанный ServiceEntity
-        var serviceEntity = serviceRepository.GetByIdAsync(queueServiceEntity.ServiceId).Result;
-        if (serviceEntity == null)
-        {
-            throw new InvalidOperationException($"Service with ID {queueServiceEntity.ServiceId} not found.");
-        }
-
-        // Преобразуем ServiceEntity в доменный объект Service
-        var service = new Service(serviceEntity.Name, TimeSpan.Parse(serviceEntity.AverageTime));
-
-        // Создаем и возвращаем доменный объект Client
-        return new Client(this.UserId, service);
-    }
-
-
+    
 }

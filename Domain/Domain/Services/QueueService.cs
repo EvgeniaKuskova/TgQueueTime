@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Services;
 
-public class QueueService : IQueueService
+public class QueueService
 {
     private readonly IRepository<QueueEntity> _queueRepository;
     private readonly IRepository<QueueServicesEntity> _queueServicesRepository;

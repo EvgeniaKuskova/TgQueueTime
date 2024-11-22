@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Infrastructure;
 using Infrastructure.Repositories;
+using TgQueueTime.Application;
 using Xunit;
 
 public class RepositoryTests
