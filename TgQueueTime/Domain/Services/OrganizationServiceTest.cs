@@ -101,7 +101,6 @@ public class OrganizationServiceTest
     [Fact]
     public async Task AddServiceAsync_Should_Add_Service_And_Link_To_Queue()
     {
-        // Arrange
         var dbContext = GetDbContext();
         var serviceRepository = new Repository<ServiceEntity>(dbContext);
         var queueRepository = new Repository<QueueEntity>(dbContext);
@@ -144,13 +143,50 @@ public class OrganizationServiceTest
         Assert.Equal(queueInDb.Id, queueServiceInDb.QueueId);
         Assert.Equal(serviceInDb.Id, queueServiceInDb.ServiceId);
 
-        // Act: Попытка повторно добавить ту же услугу к тому же окну
         await organizationService.AddServiceAsync(organization, service, 1);
 
-        // Assert: Связь не должна дублироваться
         var allQueueServices = await queueServicesRepository
             .GetAllByCondition(qs => qs.QueueId == queueInDb.Id && qs.ServiceId == serviceInDb.Id)
             .ToListAsync();
         Assert.Single(allQueueServices);
     }
+    
+    [Fact]
+    public async Task GetAllOrganizations_Should_Return_All_Organizations()
+    {
+        var dbContext = GetDbContext();
+        var organizationRepository = new Repository<OrganizationEntity>(dbContext);
+        var serviceRepository = new Repository<ServiceEntity>(dbContext);
+    
+        var organizationService = new OrganizationService(
+            new Repository<QueueEntity>(dbContext),
+            new Repository<QueueServicesEntity>(dbContext),
+            new Repository<ClientsEntity>(dbContext),
+            organizationRepository,
+            serviceRepository
+        );
+    
+        var organizations = new List<OrganizationEntity>
+        {
+            new OrganizationEntity { Name = "Org 1" },
+            new OrganizationEntity { Name = "Org 2" },
+            new OrganizationEntity { Name = "Org 3" }
+        };
+    
+        foreach (var organization in organizations)
+        {
+            await organizationRepository.AddAsync(organization);
+        }
+    
+        await dbContext.SaveChangesAsync();
+    
+        var result = await organizationService.GetAllOrganizations();
+    
+        Assert.NotNull(result);
+        Assert.Equal(organizations.Count, result.Count);
+        Assert.Contains(result, o => o.Name == "Org 1");
+        Assert.Contains(result, o => o.Name == "Org 2");
+        Assert.Contains(result, o => o.Name == "Org 3");
+    }
+
 }

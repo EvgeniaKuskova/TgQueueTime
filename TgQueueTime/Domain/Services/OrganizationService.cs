@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Services;
 
@@ -42,11 +43,9 @@ public class OrganizationService : IOrganizationService
 
     public async Task AddServiceAsync(Organization organization, Service service, int windowNumber)
     {
-        // Проверяем, существует ли услуга в организации
         var existingServiceEntity = await _serviceRepository.GetByConditionsAsync(
             s => s.Name == service.Name && s.OrganizationId == organization.Id);
 
-        // Если услуга не существует, добавляем ее
         if (existingServiceEntity == null)
         {
             var serviceEntity = new ServiceEntity
@@ -57,19 +56,17 @@ public class OrganizationService : IOrganizationService
             };
 
             await _serviceRepository.AddAsync(serviceEntity);
-            existingServiceEntity = serviceEntity; // Обновляем ссылку на созданную услугу
+            existingServiceEntity = serviceEntity;
         }
 
         var queueEntity = await _queueRepository.GetByConditionsAsync(
             q => q.OrganizationId == organization.Id && q.WindowNumber == windowNumber);
 
-        // Проверяем, существует ли связь между окном и услугой
         var existingQueueService = await _queueServicesRepository.GetByConditionsAsync(
             qs => qs.QueueId == queueEntity.Id && qs.ServiceId == existingServiceEntity.Id);
 
         if (existingQueueService == null)
         {
-            // Создаем связь между окном и услугой
             var queueServiceEntity = new QueueServicesEntity
             {
                 QueueId = queueEntity.Id,
@@ -79,4 +76,18 @@ public class OrganizationService : IOrganizationService
             await _queueServicesRepository.AddAsync(queueServiceEntity);
         }
     }
+
+    public async Task<List<Organization>> GetAllOrganizations()
+    {
+        var organizationEntities = await _organizationRepository
+            .GetAllByCondition(_ => true)
+            .ToListAsync();
+        var organizations = organizationEntities
+            .Select(entity => entity.ToDomain(_serviceRepository))
+            .ToList();
+
+        return organizations;
+    }
+
+
 }

@@ -238,7 +238,6 @@ public class QueueServiceTest
             organizationRepository, serviceRepository);
         var waitTime = await queueService.GetClientTimeQuery(testClient);
 
-        // Assert
         // Рассчитываем вручную ожидаемое время
         var elapsedTimeForLastClient = TimeSpan.FromMinutes(3); // Last client already served for 3 minutes
         var remainingTimeForLastClient = TimeSpan.FromMinutes(5) - elapsedTimeForLastClient;
@@ -253,45 +252,73 @@ public class QueueServiceTest
     }
 
     [Fact]
-    public async Task MoveQueue_Should_Update_Next_Client_StartTime()
+    public async Task MoveQueue_Should_Update_Queue_Correctly()
     {
         var dbContext = GetDbContext();
         var queueRepository = new Repository<QueueEntity>(dbContext);
+        var queueServicesRepository = new Repository<QueueServicesEntity>(dbContext);
         var clientRepository = new Repository<ClientsEntity>(dbContext);
+        var serviceRepository = new Repository<ServiceEntity>(dbContext);
         var organizationRepository = new Repository<OrganizationEntity>(dbContext);
 
-        var queueService = new QueueService(queueRepository, null, clientRepository, organizationRepository, null);
+        var queueService = new QueueService(queueRepository, queueServicesRepository, clientRepository,
+            organizationRepository, serviceRepository);
 
-        var organization = new OrganizationEntity { Name = "Test Organization" };
-        await organizationRepository.AddAsync(organization);
+        var organizationEntity = new OrganizationEntity { Name = "Test Organization" };
+        await organizationRepository.AddAsync(organizationEntity);
         await dbContext.SaveChangesAsync();
 
-        var queue = new QueueEntity { OrganizationId = organization.Id, WindowNumber = 1 };
-        await queueRepository.AddAsync(queue);
+        var serviceEntity = new ServiceEntity
+        {
+            Name = "Test Service",
+            AverageTime = "00:05:00",
+            OrganizationId = organizationEntity.Id
+        };
+        await serviceRepository.AddAsync(serviceEntity);
         await dbContext.SaveChangesAsync();
 
+        var queueEntity = new QueueEntity
+        {
+            OrganizationId = organizationEntity.Id,
+            WindowNumber = 1
+        };
+        await queueRepository.AddAsync(queueEntity);
+        await dbContext.SaveChangesAsync();
+
+        var queueServiceEntity = new QueueServicesEntity
+        {
+            QueueId = queueEntity.Id,
+            ServiceId = serviceEntity.Id
+        };
+        await queueServicesRepository.AddAsync(queueServiceEntity);
+        await dbContext.SaveChangesAsync();
+
+        var startTime = DateTime.Now.AddMinutes(-6).ToString("o"); // Клиент обслуживается уже 6 минут
         var clients = new List<ClientsEntity>
         {
             new ClientsEntity
             {
-                QueueId = queue.Id,
+                QueueId = queueEntity.Id,
+                QueueServiceId = queueServiceEntity.Id,
                 UserId = 1,
                 Position = 1,
-                StartTime = DateTime.Now.AddMinutes(-5).ToString("o") // Клиент уже обслуживается
+                StartTime = startTime
             },
             new ClientsEntity
             {
-                QueueId = queue.Id,
+                QueueId = queueEntity.Id,
+                QueueServiceId = queueServiceEntity.Id,
                 UserId = 2,
                 Position = 2,
-                StartTime = null // Следующий клиент
+                StartTime = null
             },
             new ClientsEntity
             {
-                QueueId = queue.Id,
+                QueueId = queueEntity.Id,
+                QueueServiceId = queueServiceEntity.Id,
                 UserId = 3,
                 Position = 3,
-                StartTime = null // Клиент в очереди
+                StartTime = null
             }
         };
 
@@ -302,31 +329,187 @@ public class QueueServiceTest
 
         await dbContext.SaveChangesAsync();
 
-        var organizationDomain = new Organization(organization.Id, organization.Name);
-        await queueService.MoveQueue(organizationDomain, queue.WindowNumber);
+        var organization = new Organization(organizationEntity.Id, organizationEntity.Name);
 
-        var updatedClients = await clientRepository
-            .GetAllByValueAsync(c => c.QueueId, queue.Id)
+        await queueService.MoveQueue(organization, 1);
+
+        var remainingClients = await clientRepository
+            .GetAllByValueAsync(c => c.QueueId, queueEntity.Id)
             .OrderBy(c => c.Position)
             .ToListAsync();
 
-        Assert.NotNull(updatedClients);
+        Assert.Equal(2, remainingClients.Count);
+        Assert.DoesNotContain(remainingClients, c => c.UserId == 1);
 
-        var updatedFirstClient = updatedClients.FirstOrDefault(c => c.Position == 1);
-        Assert.NotNull(updatedFirstClient);
-        Assert.NotNull(updatedFirstClient.StartTime); // Первый клиент остается с начатым временем обслуживания
+        var nextClient = remainingClients.FirstOrDefault(c => c.UserId == 2);
+        Assert.NotNull(nextClient);
+        Assert.NotNull(nextClient.StartTime); // Следующий клиент должен получить StartTime
+        Assert.Equal(2, nextClient.Position); // Позиция следующего клиента остается неизменной
+    }
 
-        var updatedSecondClient = updatedClients.FirstOrDefault(c => c.Position == 2);
-        Assert.NotNull(updatedSecondClient);
-        Assert.NotNull(updatedSecondClient.StartTime); // Второй клиент теперь обслуживается
+    [Fact]
+    public async Task GetNumberClientsBeforeQuery_Should_Return_Correct_Count()
+    {
+        var dbContext = GetDbContext();
+        var clientRepository = new Repository<ClientsEntity>(dbContext);
 
-        var actualStartTime = DateTime.Parse(updatedSecondClient.StartTime);
-        var expectedStartTime = DateTime.Now;
+        var queueId = 1L;
 
-        Assert.Equal(expectedStartTime, actualStartTime, TimeSpan.FromSeconds(1));
+        var clients = new List<ClientsEntity>
+        {
+            new ClientsEntity { QueueId = queueId, UserId = 1, Position = 1, StartTime = null },
+            new ClientsEntity { QueueId = queueId, UserId = 2, Position = 2, StartTime = null },
+            new ClientsEntity { QueueId = queueId, UserId = 3, Position = 3, StartTime = DateTime.Now.ToString("o") },
+            new ClientsEntity { QueueId = queueId, UserId = 4, Position = 4, StartTime = null }
+        };
 
-        var thirdClient = updatedClients.FirstOrDefault(c => c.Position == 3);
-        Assert.NotNull(thirdClient);
-        Assert.Null(thirdClient.StartTime); // Третий клиент остается в ожидании
+        foreach (var client in clients)
+        {
+            await clientRepository.AddAsync(client);
+        }
+
+        await dbContext.SaveChangesAsync();
+
+        var testClient = clients[3];
+
+        var queueService = new QueueService(null, null, clientRepository, null, null);
+
+        var countBefore = await queueService.GetNumberClientsBeforeQuery(testClient);
+
+        Assert.Equal(2, countBefore);
+    }
+
+    [Fact]
+    public async Task GetAllClientsInQueueQuery_Should_Return_All_Clients_In_Queue()
+    {
+        var dbContext = GetDbContext();
+        var queueRepository = new Repository<QueueEntity>(dbContext);
+        var clientRepository = new Repository<ClientsEntity>(dbContext);
+        var serviceRepository = new Repository<ServiceEntity>(dbContext);
+        var queueServiceRepository = new Repository<QueueServicesEntity>(dbContext);
+        var organizationRepository = new Repository<OrganizationEntity>(dbContext);
+
+        var queueService = new QueueService(queueRepository, queueServiceRepository, clientRepository,
+            organizationRepository, serviceRepository);
+
+        var organization = new OrganizationEntity
+        {
+            Name = "Test Organization"
+        };
+        await organizationRepository.AddAsync(organization);
+        await dbContext.SaveChangesAsync();
+
+        var service = new ServiceEntity
+        {
+            Name = "Test Service",
+            AverageTime = "00:05:00",
+            OrganizationId = organization.Id
+        };
+        await serviceRepository.AddAsync(service);
+        await dbContext.SaveChangesAsync();
+
+        var queue = new QueueEntity
+        {
+            OrganizationId = organization.Id,
+            WindowNumber = 1
+        };
+        await queueRepository.AddAsync(queue);
+        await dbContext.SaveChangesAsync();
+
+        var clients = new List<ClientsEntity>
+        {
+            new ClientsEntity
+            {
+                QueueId = queue.Id,
+                QueueServiceId = service.Id,
+                UserId = 1,
+                Position = 1,
+                StartTime = DateTime.Now.ToString("o")
+            },
+            new ClientsEntity
+            {
+                QueueId = queue.Id,
+                QueueServiceId = service.Id,
+                UserId = 2,
+                Position = 2,
+                StartTime = null
+            },
+            new ClientsEntity
+            {
+                QueueId = queue.Id,
+                QueueServiceId = service.Id,
+                UserId = 3,
+                Position = 3,
+                StartTime = null
+            }
+        };
+
+        foreach (var client in clients)
+        {
+            await clientRepository.AddAsync(client);
+        }
+
+        await dbContext.SaveChangesAsync();
+
+        var result = await queueService.GetAllClientsInQueueQuery(
+            new Organization(organization.Id, organization.Name), 1);
+
+        Assert.NotNull(result);
+        Assert.Equal(3, result.Count);
+        Assert.Equal(1, result[0].Id); // Проверка, что клиенты идут в правильном порядке
+        Assert.Equal(2, result[1].Id);
+        Assert.Equal(3, result[2].Id);
+    }
+
+    [Fact]
+    public async Task GetAllServices_Should_Return_All_Services_For_Organization()
+    {
+        var dbContext = GetDbContext();
+        var serviceRepository = new Repository<ServiceEntity>(dbContext);
+        var organizationRepository = new Repository<OrganizationEntity>(dbContext);
+        var queueRepository = new Repository<QueueEntity>(dbContext);
+        var clientRepository = new Repository<ClientsEntity>(dbContext);
+        var queueServiceRepository = new Repository<QueueServicesEntity>(dbContext);
+
+        var queueService = new QueueService(queueRepository, queueServiceRepository, clientRepository,
+            organizationRepository, serviceRepository);
+
+        var organization = new OrganizationEntity
+        {
+            Name = "Test Organization"
+        };
+        await organizationRepository.AddAsync(organization);
+        await dbContext.SaveChangesAsync();
+
+        var service1 = new ServiceEntity
+        {
+            Name = "Test Service 1",
+            AverageTime = "00:15:00",
+            OrganizationId = organization.Id
+        };
+        var service2 = new ServiceEntity
+        {
+            Name = "Test Service 2",
+            AverageTime = "00:30:00",
+            OrganizationId = organization.Id
+        };
+        await serviceRepository.AddAsync(service1);
+        await serviceRepository.AddAsync(service2);
+        await dbContext.SaveChangesAsync();
+
+        var domainOrganization = organization.ToDomain(serviceRepository);
+
+        var services = await queueService.GetAllServices(domainOrganization);
+
+        Assert.NotNull(services);
+        Assert.Equal(2, services.Count);
+
+        var serviceNames = services.Select(s => s.Name).ToList();
+        Assert.Contains("Test Service 1", serviceNames);
+        Assert.Contains("Test Service 2", serviceNames);
+
+        var serviceAverageTimes = services.Select(s => s.AverageTime).ToList();
+        Assert.Contains(TimeSpan.FromMinutes(15), serviceAverageTimes);
+        Assert.Contains(TimeSpan.FromMinutes(30), serviceAverageTimes);
     }
 }

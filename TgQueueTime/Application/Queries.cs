@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Domain;
+using Domain.Entities;
 using Domain.Services;
 using Infrastructure.Repositories;
 
@@ -30,7 +31,7 @@ public class Queries
         _queueServicesRepository = queueServicesRepository;
     }
 
-    async Task<TimeSpan> GetClientTimeQuery(long idClient)
+    public async Task<TimeSpan> GetClientTimeQuery(long idClient)
     {
         var clientEntity = await _clientRepository.GetByIdAsync(idClient);
         if (clientEntity == null)
@@ -41,23 +42,41 @@ public class Queries
         return await _queueService.GetClientTimeQuery(clientEntity);
     }
 
-    void GetNumberClientsBeforeQuery(long idClient, string organizationName)
+    public async Task<int> GetNumberClientsBeforeQuery(long idClient)
     {
-        // заглушка
+        var clientEntity = await _clientRepository.GetByIdAsync(idClient);
+        if (clientEntity == null)
+        {
+            throw new InvalidOperationException($"Клиент с id {idClient} не стоит в очереди");
+        }
+
+        return await _queueService.GetNumberClientsBeforeQuery(clientEntity);
     }
 
-    void GetAllClientsInQueueQuery(long idOrganization, int windowNumber)
+    public async Task<List<Client>> GetAllClientsInQueueQuery(long idOrganization, int windowNumber)
     {
-        // заглушка
+        var organizationEntity = await _organizationRepository.GetByIdAsync(idOrganization);
+        if (organizationEntity == null)
+        {
+            throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");
+        }
+        var organization = organizationEntity.ToDomain(_serviceRepository);
+        return await _queueService.GetAllClientsInQueueQuery(organization, windowNumber);
     }
 
-    void GetAllServices(string organizationName)
+    public async Task<List<Service>> GetAllServices(long idOrganization)
     {
-        // заглушка
+        var organizationEntity = await _organizationRepository.GetByIdAsync(idOrganization);
+        if (organizationEntity == null)
+        {
+            throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");
+        }
+        var organization = organizationEntity.ToDomain(_serviceRepository);
+        return await _queueService.GetAllServices(organization);
     }
 
-    void GetAllOrganizations()
+    public async Task<List<Organization>> GetAllOrganizations()
     {
-        // заглушка
+        return await _organizationService.GetAllOrganizations();
     }
 }
