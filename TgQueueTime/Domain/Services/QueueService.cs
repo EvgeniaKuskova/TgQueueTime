@@ -201,4 +201,34 @@ public class QueueService : IQueueService
 
         return totalWaitTime;
     }
+
+    public async Task MoveQueue(Organization organization, int windowNumber)
+    {
+        var queueEntity = await _queueRepository.GetByConditionsAsync(
+            q => q.OrganizationId == organization.Id && q.WindowNumber == windowNumber);
+
+        if (queueEntity == null)
+        {
+            throw new InvalidOperationException(
+                $"Очередь для окна {windowNumber} в организации с ID {organization.Id} не найдена.");
+        }
+
+        var clientsInQueue = await _clientRepository
+            .GetAllByValueAsync(c => c.QueueId, queueEntity.Id)
+            .OrderBy(c => c.Position)
+            .ToListAsync();
+
+        var nextClient = clientsInQueue.FirstOrDefault(c => string.IsNullOrEmpty(c.StartTime));
+
+        if (nextClient == null)
+        {
+            // Если все клиенты уже обслуживаются или очередь пуста
+            throw new InvalidOperationException(
+                $"В очереди для окна {windowNumber} нет клиентов, ожидающих обслуживания.");
+        }
+
+        nextClient.StartTime = DateTime.Now.ToString("o");
+
+        await _clientRepository.UpdateAsync(nextClient);
+    }
 }

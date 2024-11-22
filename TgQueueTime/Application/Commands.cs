@@ -105,5 +105,15 @@ public class Commands
         }
     }
 
-    
+    public async Task MoveQueue(long idOrganization, int windowNumber)
+    {
+        var organizationEntity = await _organizationRepository.GetByIdAsync(idOrganization);
+        if (organizationEntity == null)
+        {
+            throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");
+        }
+
+        var organization = organizationEntity.ToDomain(_serviceRepository);
+        await _queueService.MoveQueue(organization, windowNumber);
+    }
 }

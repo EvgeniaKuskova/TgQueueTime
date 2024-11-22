@@ -82,7 +82,6 @@ public class QueueServiceTest
             .FirstOrDefaultAsync(q => q.WindowNumber == queue.WindowNumber && q.OrganizationId == organization.Id);
     }
 
-
     [Fact]
     public async Task AddClientToQueueAsync_Should_Add_Client_To_Optimal_Queue()
     {
@@ -94,7 +93,7 @@ public class QueueServiceTest
         };
 
         await context.Organizations.AddAsync(organization);
-        await context.SaveChangesAsync(); 
+        await context.SaveChangesAsync();
 
         var service1 = new ServiceEntity
         {
@@ -130,8 +129,8 @@ public class QueueServiceTest
 
         var queueService1 = new QueueServicesEntity
         {
-            QueueId = queue1.Id, 
-            ServiceId = service1.Id 
+            QueueId = queue1.Id,
+            ServiceId = service1.Id
         };
 
         var queueService2 = new QueueServicesEntity
@@ -156,7 +155,7 @@ public class QueueServiceTest
             new Repository<ClientsEntity>(context),
             new Repository<OrganizationEntity>(context),
             new Repository<ServiceEntity>(context));
-        
+
         await queueService.AddClientToQueueAsync(client,
             new Organization(organization.Id, "Test Organization", servicesProvided));
 
@@ -251,5 +250,83 @@ public class QueueServiceTest
         var roundedExpectedWaitTime = TimeSpan.FromSeconds(Math.Round(expectedWaitTime.TotalSeconds));
 
         Assert.Equal(roundedExpectedWaitTime, roundedWaitTime);
+    }
+
+    [Fact]
+    public async Task MoveQueue_Should_Update_Next_Client_StartTime()
+    {
+        var dbContext = GetDbContext();
+        var queueRepository = new Repository<QueueEntity>(dbContext);
+        var clientRepository = new Repository<ClientsEntity>(dbContext);
+        var organizationRepository = new Repository<OrganizationEntity>(dbContext);
+
+        var queueService = new QueueService(queueRepository, null, clientRepository, organizationRepository, null);
+
+        var organization = new OrganizationEntity { Name = "Test Organization" };
+        await organizationRepository.AddAsync(organization);
+        await dbContext.SaveChangesAsync();
+
+        var queue = new QueueEntity { OrganizationId = organization.Id, WindowNumber = 1 };
+        await queueRepository.AddAsync(queue);
+        await dbContext.SaveChangesAsync();
+
+        var clients = new List<ClientsEntity>
+        {
+            new ClientsEntity
+            {
+                QueueId = queue.Id,
+                UserId = 1,
+                Position = 1,
+                StartTime = DateTime.Now.AddMinutes(-5).ToString("o") // Клиент уже обслуживается
+            },
+            new ClientsEntity
+            {
+                QueueId = queue.Id,
+                UserId = 2,
+                Position = 2,
+                StartTime = null // Следующий клиент
+            },
+            new ClientsEntity
+            {
+                QueueId = queue.Id,
+                UserId = 3,
+                Position = 3,
+                StartTime = null // Клиент в очереди
+            }
+        };
+
+        foreach (var client in clients)
+        {
+            await clientRepository.AddAsync(client);
+        }
+
+        await dbContext.SaveChangesAsync();
+
+        var organizationDomain = new Organization(organization.Id, organization.Name);
+        await queueService.MoveQueue(organizationDomain, queue.WindowNumber);
+
+        var updatedClients = await clientRepository
+            .GetAllByValueAsync(c => c.QueueId, queue.Id)
+            .OrderBy(c => c.Position)
+            .ToListAsync();
+
+        Assert.NotNull(updatedClients);
+
+        var updatedFirstClient = updatedClients.FirstOrDefault(c => c.Position == 1);
+        Assert.NotNull(updatedFirstClient);
+        Assert.NotNull(updatedFirstClient.StartTime); // Первый клиент остается с начатым временем обслуживания
+
+        var updatedSecondClient = updatedClients.FirstOrDefault(c => c.Position == 2);
+        Assert.NotNull(updatedSecondClient);
+        Assert.NotNull(updatedSecondClient.StartTime); // Второй клиент теперь обслуживается
+
+        var actualStartTime = DateTime.Parse(updatedSecondClient.StartTime);
+        var expectedStartTime = DateTime.Now;
+
+        Assert.Equal(expectedStartTime, actualStartTime, TimeSpan.FromSeconds(1));
+
+        var thirdClient = updatedClients.FirstOrDefault(c => c.Position == 3);
+        Assert.NotNull(thirdClient);
+        Assert.Null(thirdClient.StartTime); // Третий клиент остается в ожидании
     }
 }
