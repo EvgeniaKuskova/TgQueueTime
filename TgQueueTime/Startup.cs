@@ -10,7 +10,7 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlite("Data Source=Infrastructure/Database/Database.db"));
+            options.UseSqlite("Data Source=Infrastructure/Infrastructure/Database/Database.db"));
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         
         services.AddScoped<OrganizationService>();
@@ -18,5 +18,7 @@ public class Startup
         
         services.AddScoped<Commands>();
         services.AddScoped<Queries>();
+        
+        services.AddScoped<DbContext, ApplicationDbContext>();
     }
 }
