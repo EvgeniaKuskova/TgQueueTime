@@ -12,21 +12,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e513becc-52ac-4d68-91b6-30127a8136b6" name="Changes" comment="вот теперь нет круговых зависимостей">
+    <list default="true" id="e513becc-52ac-4d68-91b6-30127a8136b6" name="Changes" comment="удалены лишние зависимости в TgQueueTime">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TgQueueTime/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TgQueueTime/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Application/Application.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Application/Application.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Domain/Domain.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Domain/Domain.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Infrastructure/Infrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/Infrastructure.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Tests/Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/Tests.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/TgQueueTime.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/TgQueueTime.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/Debug/net6.0/TgQueueTime.assets.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/TgQueueTime.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/TgQueueTime.csproj.nuget.dgspec.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/TgQueueTime.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/TgQueueTime.csproj.nuget.g.props" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/TgQueueTime.csproj.nuget.g.targets" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/TgQueueTime.csproj.nuget.g.targets" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/project.assets.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/project.nuget.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/project.packagespec.json" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/project.packagespec.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/TgQueueTime/obj/rider.project.restore.info" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +32,9 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="mock://C:/Users/eliza/C#_projects/TgQueueTime/Infrastructure/Program.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo"><![CDATA[{
@@ -167,7 +162,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1732340819854</updated>
-      <workItem from="1732340822647" duration="1139000" />
+      <workItem from="1732340822647" duration="1266000" />
     </task>
     <task id="LOCAL-00001" summary="вот теперь нет круговых зависимостей">
       <option name="closed" value="true" />
@@ -177,7 +172,15 @@
       <option name="project" value="LOCAL" />
       <updated>1732341726005</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="удалены лишние зависимости в TgQueueTime">
+      <option name="closed" value="true" />
+      <created>1732342022347</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1732342022347</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -187,6 +190,7 @@
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="вот теперь нет круговых зависимостей" />
-    <option name="LAST_COMMIT_MESSAGE" value="вот теперь нет круговых зависимостей" />
+    <MESSAGE value="удалены лишние зависимости в TgQueueTime" />
+    <option name="LAST_COMMIT_MESSAGE" value="удалены лишние зависимости в TgQueueTime" />
   </component>
 </project>
