@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "h9/gYwz8OAlUR2RlFLzlrZ/bnBC1KjnjXSZV3U0OnAaPNtvxabpv8wInvTp14Jhhr4mbcgrPiJWCwnSIppJy4w==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\eliza\\C#_projects\\TgQueueTime\\TgQueueTime\\TgQueueTime.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\eliza\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
+    "C:\\Users\\eliza\\.nuget\\packages\\telegram.bot\\19.0.0\\telegram.bot.19.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

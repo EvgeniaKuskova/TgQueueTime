@@ -571,26 +571,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\КусЯ\\.nuget\\packages\\": {}
+    "C:\\Users\\eliza\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime\\TelegramBots\\TelegramBots.csproj",
+      "projectUniqueName": "C:\\Users\\eliza\\C#_projects\\TgQueueTime\\TelegramBots\\TelegramBots.csproj",
       "projectName": "TelegramBots",
-      "projectPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime\\TelegramBots\\TelegramBots.csproj",
-      "packagesPath": "C:\\Users\\КусЯ\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime\\TelegramBots\\obj\\",
+      "projectPath": "C:\\Users\\eliza\\C#_projects\\TgQueueTime\\TelegramBots\\TelegramBots.csproj",
+      "packagesPath": "C:\\Users\\eliza\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\eliza\\C#_projects\\TgQueueTime\\TelegramBots\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\КусЯ\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\eliza\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -630,7 +628,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Users\\КусЯ\\.dotnet\\sdk\\6.0.418\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.427\\RuntimeIdentifierGraph.json"
       }
     }
   }
