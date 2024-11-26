@@ -2,6 +2,7 @@
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramBots.Command;
+using TgQueueTime.Application;
 using BotCommand = TelegramBots.Command.BotCommand;
 using ICommand = TelegramBots.Command.ICommand;
 
@@ -14,11 +15,15 @@ public class UpdateHandler : IUpdateHandler
     private readonly Dictionary<string, ICommand> _botResponses;
     private readonly Dictionary<long, string> _serviceAverageTimeUpdate = new();
     private readonly Dictionary<long, Dictionary<string, TimeSpan>> _serviceAverageTime = new();
-    private readonly ICommand[] _commands;
+    private readonly ICommand[] _botCommands;
+    private readonly Commands _commands;
+    private readonly Queries _queries;
     
-    public UpdateHandler(ITelegramBotClient botClient)
+    public UpdateHandler(ITelegramBotClient botClient, Commands commands, Queries queries)
     {
         _botClient = botClient;
+        _commands = commands;
+        _queries = queries;
         _userStates = new Dictionary<long, UserState>();
         _botResponses = new Dictionary<string, ICommand>
         {
@@ -48,16 +53,16 @@ public class UpdateHandler : IUpdateHandler
                 UserState.Start)
         };
 
-        _commands = new ICommand[]
+        _botCommands = new ICommand[]
         {
-            new RegisterOrganization(),
+            new RegisterOrganization(_commands),
             new FixingNameService(_serviceAverageTime),
             new FixingAverageTime(_serviceAverageTime),
-            new RegisterService(_serviceAverageTime),
-            new UpdatingAverageTime(_serviceAverageTimeUpdate),
+            new RegisterService(_serviceAverageTime, _commands),
+            new UpdatingAverageTime(_serviceAverageTimeUpdate, _commands),
             new FixingNameServiceUpdate(_serviceAverageTimeUpdate),
-            new GettingAllClients(),
-            new AcceptingNextClient(),
+            new GettingAllClients(_queries),
+            new AcceptingNextClient(_commands),
         };
     }
 
@@ -80,7 +85,7 @@ public class UpdateHandler : IUpdateHandler
                 await _botResponses["default"].ExecuteAsync(_botClient, chatId, _userStates, messageText);
             else
             {
-                await _commands
+                await _botCommands
                     .First(x => x.Accept(userState))
                     .ExecuteAsync(_botClient, chatId, _userStates, messageText);
             }

@@ -87,19 +87,9 @@ public class Commands
 
         var service = new Service(serviceName, averageTime);
 
-        // Получаем зарегистрированные окна из базы
-        var registeredWindows = await _queueRepository
-            .GetAllByValueAsync(q => q.OrganizationId, idOrganization)
-            .Select(q => q.WindowNumber)
-            .ToListAsync();
 
         foreach (var windowNumber in windowNumbers)
         {
-            if (!registeredWindows.Contains(windowNumber))
-            {
-                throw new InvalidOperationException($"Окно {windowNumber} не зарегистрировано в организации с id {idOrganization}.");
-            }
-
             await _organizationService.AddServiceAsync(organization, service, windowNumber);
         }
     }

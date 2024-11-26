@@ -858,8 +858,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
-          "Infrastructure": "1.0.0",
-          "Telegram.Bot": "19.0.0"
+          "Infrastructure": "1.0.0"
         },
         "compile": {
           "bin/placeholder/Domain.dll": {}
@@ -1870,35 +1869,37 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\eliza\\.nuget\\packages\\": {}
+    "C:\\Users\\КусЯ\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\eliza\\C#_projects\\TgQueueTime\\TgQueueTime\\TgQueueTime.csproj",
+      "projectUniqueName": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\TgQueueTime\\TgQueueTime.csproj",
       "projectName": "TgQueueTime",
-      "projectPath": "C:\\Users\\eliza\\C#_projects\\TgQueueTime\\TgQueueTime\\TgQueueTime.csproj",
-      "packagesPath": "C:\\Users\\eliza\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\eliza\\C#_projects\\TgQueueTime\\TgQueueTime\\obj\\",
+      "projectPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\TgQueueTime\\TgQueueTime.csproj",
+      "packagesPath": "C:\\Users\\КусЯ\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\TgQueueTime\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\eliza\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\КусЯ\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "C:\\Users\\eliza\\C#_projects\\TgQueueTime\\Application\\Application.csproj": {
-              "projectPath": "C:\\Users\\eliza\\C#_projects\\TgQueueTime\\Application\\Application.csproj"
+            "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Application\\Application.csproj": {
+              "projectPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Application\\Application.csproj"
             },
-            "C:\\Users\\eliza\\C#_projects\\TgQueueTime\\Infrastructure\\Infrastructure.csproj": {
-              "projectPath": "C:\\Users\\eliza\\C#_projects\\TgQueueTime\\Infrastructure\\Infrastructure.csproj"
+            "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Infrastructure\\Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Infrastructure\\Infrastructure.csproj"
             }
           }
         }
@@ -1942,7 +1943,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.427\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Users\\КусЯ\\.dotnet\\sdk\\6.0.418\\RuntimeIdentifierGraph.json"
       }
     }
   }

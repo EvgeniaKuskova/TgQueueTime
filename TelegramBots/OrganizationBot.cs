@@ -2,6 +2,7 @@
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types.Enums;
+using TgQueueTime.Application;
 
 
 namespace TelegramBots;
@@ -9,11 +10,15 @@ public class OrganizationBot
 {
     private readonly ITelegramBotClient _botClient;
     private readonly IUpdateHandler _updateHandler;
+    private readonly Commands _commands;
+    private readonly Queries _queries;
     
-    public OrganizationBot(string token)
+    public OrganizationBot(string token, Commands commands, Queries queries)
     {
+        _commands = commands;
+        _queries = queries;
         _botClient = new TelegramBotClient(token);
-        _updateHandler = new UpdateHandler(_botClient);
+        _updateHandler = new UpdateHandler(_botClient, _commands, _queries);
     }
 
     public async Task Run()

@@ -10,4 +10,9 @@ public class Service
         Name = name;
         AverageTime = time;
     }
+
+    public override string ToString()
+    {
+        return $"{Name}";
+    }
 }

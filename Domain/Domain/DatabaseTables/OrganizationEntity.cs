@@ -17,7 +17,8 @@ public class OrganizationEntity
     {
         return new OrganizationEntity
         {
-            Name = domainEntity.Name
+            Name = domainEntity.Name,
+            Id = domainEntity.Id
         };
     }
 

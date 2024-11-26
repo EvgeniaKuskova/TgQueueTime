@@ -12,4 +12,9 @@ public class Client
         Id = id;
         Service = service;
     }
+
+    public override string ToString()
+    {
+        return $"{Id} {Service}";
+    }
 }

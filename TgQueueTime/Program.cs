@@ -1,6 +1,0 @@
-﻿namespace TgQueueTime;
-
-    class Program
-    {
-    }
-

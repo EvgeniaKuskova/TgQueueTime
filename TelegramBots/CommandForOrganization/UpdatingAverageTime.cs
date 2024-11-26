@@ -1,4 +1,5 @@
 ﻿using Telegram.Bot;
+using TgQueueTime.Application;
 
 namespace TelegramBots.Command;
 
@@ -6,10 +7,12 @@ public class UpdatingAverageTime: ICommand
 {
     private readonly Dictionary<long, string> _serviceAverageTimeUpdate;
     private readonly string _goodResponse;
+    private readonly Commands _commands;
     
-    public UpdatingAverageTime(Dictionary<long, string> serviceAverageTimeUpdate)
+    public UpdatingAverageTime(Dictionary<long, string> serviceAverageTimeUpdate, Commands commands)
     {
         _serviceAverageTimeUpdate = serviceAverageTimeUpdate;
+        _commands = commands;
         _goodResponse = "Время успешно обновлено";
     }
     public async Task ExecuteAsync(ITelegramBotClient botClient, long chatId, Dictionary<long, UserState> userStates, 
@@ -22,8 +25,19 @@ public class UpdatingAverageTime: ICommand
             return;
         }
         userStates[chatId] = UserState.Start;
-        //var responce = UpdateServiceAverageTimeCommand(chat.Id, _serviceAverageTimeUpdate[chatId],
-        //    new TimeSpan(0, minutes, 0));
+        try
+        {
+            await _commands.UpdateServiceAverageTimeCommand(chatId, _serviceAverageTimeUpdate[chatId],
+                new TimeSpan(0, minutes, 0));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            if (e is InvalidOperationException)
+                await botClient.SendTextMessageAsync(chatId, e.Message);
+            throw;
+        }
+        
         await botClient.SendTextMessageAsync(chatId, _goodResponse);
         _serviceAverageTimeUpdate.Remove(chatId);
     }

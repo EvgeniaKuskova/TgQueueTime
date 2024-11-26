@@ -4,6 +4,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgQueueTime", "TgQueueTime\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegramBots", "TelegramBots\TelegramBots.csproj", "{12F21F33-A90B-4CEB-9FAB-22200A24B244}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{9070B713-BEC0-46F3-89C3-820223E199D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{2BE2C97E-D03C-4A72-B347-115B7BB0E788}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{6BAE6379-A12F-42A3-BFFE-BC43FAA5B1A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{B36BBF47-1B12-4406-BCCC-E368F371C58D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +26,21 @@ Global
 		{12F21F33-A90B-4CEB-9FAB-22200A24B244}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12F21F33-A90B-4CEB-9FAB-22200A24B244}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12F21F33-A90B-4CEB-9FAB-22200A24B244}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9070B713-BEC0-46F3-89C3-820223E199D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9070B713-BEC0-46F3-89C3-820223E199D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9070B713-BEC0-46F3-89C3-820223E199D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9070B713-BEC0-46F3-89C3-820223E199D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BE2C97E-D03C-4A72-B347-115B7BB0E788}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BE2C97E-D03C-4A72-B347-115B7BB0E788}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BE2C97E-D03C-4A72-B347-115B7BB0E788}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BE2C97E-D03C-4A72-B347-115B7BB0E788}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BAE6379-A12F-42A3-BFFE-BC43FAA5B1A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BAE6379-A12F-42A3-BFFE-BC43FAA5B1A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BAE6379-A12F-42A3-BFFE-BC43FAA5B1A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BAE6379-A12F-42A3-BFFE-BC43FAA5B1A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B36BBF47-1B12-4406-BCCC-E368F371C58D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B36BBF47-1B12-4406-BCCC-E368F371C58D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B36BBF47-1B12-4406-BCCC-E368F371C58D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B36BBF47-1B12-4406-BCCC-E368F371C58D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -9,8 +9,10 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
+        var dbPath =
+            "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Infrastructure\\Infrastructure\\Database\\Database.db";
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlite("Data Source=Infrastructure/Infrastructure/Database/Database.db"));
+            options.UseSqlite($"Data Source={dbPath};Cache=Shared"));
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         
         services.AddScoped<OrganizationService>();

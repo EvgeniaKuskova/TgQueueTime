@@ -47,3 +47,15 @@ C:\Users\eliza\C#_projects\TgQueueTime\Infrastructure\obj\Debug\net6.0\refint\In
 C:\Users\eliza\C#_projects\TgQueueTime\Infrastructure\obj\Debug\net6.0\Infrastructure.pdb
 C:\Users\eliza\C#_projects\TgQueueTime\Infrastructure\obj\Debug\net6.0\Infrastructure.genruntimeconfig.cache
 C:\Users\eliza\C#_projects\TgQueueTime\Infrastructure\obj\Debug\net6.0\ref\Infrastructure.dll
+C:\Users\КусЯ\RiderProjects\TgQueueTime5\Infrastructure\bin\Debug\net6.0\Infrastructure.deps.json
+C:\Users\КусЯ\RiderProjects\TgQueueTime5\Infrastructure\bin\Debug\net6.0\Infrastructure.dll
+C:\Users\КусЯ\RiderProjects\TgQueueTime5\Infrastructure\bin\Debug\net6.0\Infrastructure.pdb
+C:\Users\КусЯ\RiderProjects\TgQueueTime5\Infrastructure\obj\Debug\net6.0\Infrastructure.csproj.AssemblyReference.cache
+C:\Users\КусЯ\RiderProjects\TgQueueTime5\Infrastructure\obj\Debug\net6.0\Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\КусЯ\RiderProjects\TgQueueTime5\Infrastructure\obj\Debug\net6.0\Infrastructure.AssemblyInfoInputs.cache
+C:\Users\КусЯ\RiderProjects\TgQueueTime5\Infrastructure\obj\Debug\net6.0\Infrastructure.AssemblyInfo.cs
+C:\Users\КусЯ\RiderProjects\TgQueueTime5\Infrastructure\obj\Debug\net6.0\Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\КусЯ\RiderProjects\TgQueueTime5\Infrastructure\obj\Debug\net6.0\Infrastructure.dll
+C:\Users\КусЯ\RiderProjects\TgQueueTime5\Infrastructure\obj\Debug\net6.0\refint\Infrastructure.dll
+C:\Users\КусЯ\RiderProjects\TgQueueTime5\Infrastructure\obj\Debug\net6.0\Infrastructure.pdb
+C:\Users\КусЯ\RiderProjects\TgQueueTime5\Infrastructure\obj\Debug\net6.0\ref\Infrastructure.dll
