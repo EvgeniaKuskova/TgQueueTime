@@ -25,7 +25,7 @@ public class CommandsTests
 
         // Репозитории
         var organizationRepository = new Repository<OrganizationEntity>(dbContext);
-        var serviceRepository = new Repository<ServiceEntity>(dbContext);
+        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
         var queueRepository = new Repository<QueueEntity>(dbContext);
         var clientRepository = new Repository<ClientsEntity>(dbContext);
         var queueServiceRepository = new Repository<QueueServicesEntity>(dbContext);
@@ -122,7 +122,7 @@ public class CommandsTests
         var dbContext = GetInMemoryDbContext();
 
         var organizationRepository = new Repository<OrganizationEntity>(dbContext);
-        var serviceRepository = new Repository<ServiceEntity>(dbContext);
+        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
         var queueRepository = new Repository<QueueEntity>(dbContext);
         var clientRepository = new Repository<ClientsEntity>(dbContext);
         var queueServiceRepository = new Repository<QueueServicesEntity>(dbContext);
@@ -168,7 +168,7 @@ public class CommandsTests
         var dbContext = GetInMemoryDbContext();
 
         var organizationRepository = new Repository<OrganizationEntity>(dbContext);
-        var serviceRepository = new Repository<ServiceEntity>(dbContext);
+        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
         var queueRepository = new Repository<QueueEntity>(dbContext);
         var queueServicesRepository = new Repository<QueueServicesEntity>(dbContext);
         var clientRepository = new Repository<ClientsEntity>(dbContext);
@@ -227,7 +227,7 @@ public class CommandsTests
         var dbContext = GetInMemoryDbContext();
 
         var organizationRepository = new Repository<OrganizationEntity>(dbContext);
-        var serviceRepository = new Repository<ServiceEntity>(dbContext);
+        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
         var queueRepository = new Repository<QueueEntity>(dbContext);
         var queueServicesRepository = new Repository<QueueServicesEntity>(dbContext);
         var clientRepository = new Repository<ClientsEntity>(dbContext);

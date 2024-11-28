@@ -9,13 +9,13 @@ public class OrganizationService
     private readonly IRepository<QueueServicesEntity> _queueServicesRepository;
     private readonly IRepository<ClientsEntity> _clientRepository;
     private readonly IRepository<OrganizationEntity> _organizationRepository;
-    private readonly IRepository<ServiceEntity> _serviceRepository;
+    private readonly IRepository<ServiceEntity?> _serviceRepository;
 
     public OrganizationService(IRepository<QueueEntity> queueRepository,
         IRepository<QueueServicesEntity> queueServicesRepository,
         IRepository<ClientsEntity> clientRepository,
         IRepository<OrganizationEntity> organizationRepository,
-        IRepository<ServiceEntity> serviceRepository)
+        IRepository<ServiceEntity?> serviceRepository)
     {
         _queueRepository = queueRepository;
         _clientRepository = clientRepository;
@@ -44,7 +44,7 @@ public class OrganizationService
     {
         var existingServiceEntity = await _serviceRepository.GetByConditionsAsync(
             s => s.Name == service.Name && s.OrganizationId == organization.Id);
-
+ 
         if (existingServiceEntity == null)
         {
             var serviceEntity = new ServiceEntity
@@ -53,17 +53,16 @@ public class OrganizationService
                 AverageTime = service.AverageTime.ToString(),
                 OrganizationId = organization.Id
             };
-
+ 
             await _serviceRepository.AddAsync(serviceEntity);
             existingServiceEntity = serviceEntity;
         }
-
-        var queueEntity = await _queueRepository.GetByConditionsAsync(
-            q => q.OrganizationId == organization.Id && q.WindowNumber == windowNumber);
-
+        var queueEntity = new QueueEntity(){OrganizationId = organization.Id, WindowNumber = windowNumber};
+        await _queueRepository.AddAsync(queueEntity);
+ 
         var existingQueueService = await _queueServicesRepository.GetByConditionsAsync(
             qs => qs.QueueId == queueEntity.Id && qs.ServiceId == existingServiceEntity.Id);
-
+ 
         if (existingQueueService == null)
         {
             var queueServiceEntity = new QueueServicesEntity
@@ -71,7 +70,7 @@ public class OrganizationService
                 QueueId = queueEntity.Id,
                 ServiceId = existingServiceEntity.Id
             };
-
+ 
             await _queueServicesRepository.AddAsync(queueServiceEntity);
         }
     }

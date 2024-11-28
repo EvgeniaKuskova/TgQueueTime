@@ -9,14 +9,14 @@ public class QueueService
     private readonly IRepository<QueueServicesEntity> _queueServicesRepository;
     private readonly IRepository<ClientsEntity> _clientRepository;
     private readonly IRepository<OrganizationEntity> _organizationRepository;
-    private readonly IRepository<ServiceEntity> _serviceRepository;
+    private readonly IRepository<ServiceEntity?> _serviceRepository;
 
     public QueueService(
         IRepository<QueueEntity> queueRepository,
         IRepository<QueueServicesEntity> queueServicesRepository,
         IRepository<ClientsEntity> clientRepository,
         IRepository<OrganizationEntity> organizationRepository,
-        IRepository<ServiceEntity> serviceRepository)
+        IRepository<ServiceEntity?> serviceRepository)
     {
         _queueRepository = queueRepository;
         _clientRepository = clientRepository;

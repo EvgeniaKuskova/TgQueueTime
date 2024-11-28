@@ -22,7 +22,7 @@ public class OrganizationEntity
         };
     }
 
-    public Organization ToDomain(IRepository<ServiceEntity> serviceRepository)
+    public Organization ToDomain(IRepository<ServiceEntity?> serviceRepository)
     {
         var services = serviceRepository
             .GetAllByValueAsync(s => s.OrganizationId, this.Id)

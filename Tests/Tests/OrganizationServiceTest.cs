@@ -30,7 +30,7 @@ public class OrganizationServiceTest
         var queueRepository = new Repository<QueueEntity>(context);
         var queueServicesRepository = new Repository<QueueServicesEntity>(context);
         var clientRepository = new Repository<ClientsEntity>(context);
-        var serviceRepository = new Repository<ServiceEntity>(context);
+        var serviceRepository = new Repository<ServiceEntity?>(context);
 
         var organizationService = new OrganizationService(
             queueRepository,
@@ -56,7 +56,7 @@ public class OrganizationServiceTest
         var dbContext = GetDbContext();
 
         var organizationRepository = new Repository<OrganizationEntity>(dbContext);
-        var serviceRepository = new Repository<ServiceEntity>(dbContext);
+        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
         var queueRepository = new Repository<QueueEntity>(dbContext);
         var clientRepository = new Repository<ClientsEntity>(dbContext);
         var queueServiceRepository = new Repository<QueueServicesEntity>(dbContext);
@@ -103,7 +103,7 @@ public class OrganizationServiceTest
     public async Task AddServiceAsync_Should_Add_Service_And_Link_To_Queue()
     {
         var dbContext = GetDbContext();
-        var serviceRepository = new Repository<ServiceEntity>(dbContext);
+        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
         var queueRepository = new Repository<QueueEntity>(dbContext);
         var queueServicesRepository = new Repository<QueueServicesEntity>(dbContext);
         var organizationRepository = new Repository<OrganizationEntity>(dbContext);
@@ -157,7 +157,7 @@ public class OrganizationServiceTest
     {
         var dbContext = GetDbContext();
         var organizationRepository = new Repository<OrganizationEntity>(dbContext);
-        var serviceRepository = new Repository<ServiceEntity>(dbContext);
+        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
     
         var organizationService = new OrganizationService(
             new Repository<QueueEntity>(dbContext),

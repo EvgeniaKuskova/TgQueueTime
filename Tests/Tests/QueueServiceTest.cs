@@ -155,7 +155,7 @@ public class QueueServiceTest
             new Repository<QueueServicesEntity>(context),
             new Repository<ClientsEntity>(context),
             new Repository<OrganizationEntity>(context),
-            new Repository<ServiceEntity>(context));
+            new Repository<ServiceEntity?>(context));
 
         await queueService.AddClientToQueueAsync(client,
             new Organization(organization.Id, "Test Organization", servicesProvided));
@@ -173,7 +173,7 @@ public class QueueServiceTest
         var dbContext = GetDbContext();
         var queueServiceRepository = new Repository<QueueServicesEntity>(dbContext);
         var clientRepository = new Repository<ClientsEntity>(dbContext);
-        var serviceRepository = new Repository<ServiceEntity>(dbContext);
+        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
         var queueRepository = new Repository<QueueEntity>(dbContext);
         var organizationRepository = new Repository<OrganizationEntity>(dbContext);
 
@@ -259,7 +259,7 @@ public class QueueServiceTest
         var queueRepository = new Repository<QueueEntity>(dbContext);
         var queueServicesRepository = new Repository<QueueServicesEntity>(dbContext);
         var clientRepository = new Repository<ClientsEntity>(dbContext);
-        var serviceRepository = new Repository<ServiceEntity>(dbContext);
+        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
         var organizationRepository = new Repository<OrganizationEntity>(dbContext);
 
         var queueService = new QueueService(queueRepository, queueServicesRepository, clientRepository,
@@ -386,7 +386,7 @@ public class QueueServiceTest
         var dbContext = GetDbContext();
         var queueRepository = new Repository<QueueEntity>(dbContext);
         var clientRepository = new Repository<ClientsEntity>(dbContext);
-        var serviceRepository = new Repository<ServiceEntity>(dbContext);
+        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
         var queueServiceRepository = new Repository<QueueServicesEntity>(dbContext);
         var organizationRepository = new Repository<OrganizationEntity>(dbContext);
 
@@ -466,7 +466,7 @@ public class QueueServiceTest
     public async Task GetAllServices_Should_Return_All_Services_For_Organization()
     {
         var dbContext = GetDbContext();
-        var serviceRepository = new Repository<ServiceEntity>(dbContext);
+        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
         var organizationRepository = new Repository<OrganizationEntity>(dbContext);
         var queueRepository = new Repository<QueueEntity>(dbContext);
         var clientRepository = new Repository<ClientsEntity>(dbContext);

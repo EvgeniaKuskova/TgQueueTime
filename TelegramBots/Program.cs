@@ -14,7 +14,7 @@ internal static class Program
         var commands = serviceProvider.GetRequiredService<Commands>();
         var queries = serviceProvider.GetRequiredService<Queries>();
         
-        var organizationBot = new OrganizationBot("7547068208:AAGEHHJ9N8BzOv0WWd9sCVIGxlZw8INST1A",
+        var organizationBot = new OrganizationBot("7547068208:AAGon0KmcOaFpD2VJO_UmGiqzuSs86J6TBU",
             commands, queries);
         await organizationBot.Run();
     }

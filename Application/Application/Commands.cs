@@ -10,12 +10,12 @@ public class Commands
     private readonly OrganizationService _organizationService;
     private readonly QueueService _queueService;
     private readonly IRepository<OrganizationEntity> _organizationRepository;
-    private readonly IRepository<ServiceEntity> _serviceRepository;
+    private readonly IRepository<ServiceEntity?> _serviceRepository;
     private readonly IRepository<QueueEntity> _queueRepository;
 
     public Commands(OrganizationService organizationService, QueueService queueService,
         IRepository<OrganizationEntity> organizationRepository,
-        IRepository<ServiceEntity> serviceRepository,
+        IRepository<ServiceEntity?> serviceRepository,
         IRepository<QueueEntity> queueRepository)
     {
         _organizationService = organizationService;
