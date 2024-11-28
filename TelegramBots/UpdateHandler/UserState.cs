@@ -13,8 +13,9 @@ public enum UserState
     WaitingForNumberWindowToAccept,
 
     ClientStart,
-    WaitingClientForNameOrganization,
+    WaitingClientForGetNameOrganization,
     WaitingClientForNameService,
     WaitingClientForMyTime,
     WaitingClientForCountClientsBefore,
+    WaitingClientForNameOrganization
 }

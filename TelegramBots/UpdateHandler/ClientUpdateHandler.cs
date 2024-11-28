@@ -2,6 +2,7 @@
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramBots.Command;
+using TgQueueTime.Application;
 using BotCommand = TelegramBots.Command.BotCommand;
 using ICommand = TelegramBots.Command.ICommand;
 
@@ -13,11 +14,15 @@ public class ClientUpdateHandler : IUpdateHandler
     private readonly Dictionary<long, UserState> _userStates;
     private readonly Dictionary<string, ICommand> _botResponses;
     private readonly Dictionary<long, string> _organization = new();
-    private readonly ICommand[] _commands;
+    private readonly ICommand[] _commandsBot;
+    private readonly Commands _commands;
+    private readonly Queries _queries;
 
-    public ClientUpdateHandler(ITelegramBotClient botClient)
+    public ClientUpdateHandler(ITelegramBotClient botClient, Commands commands, Queries queries)
     {
         _botClient = botClient;
+        _commands = commands;
+        _queries = queries;
         _userStates = new Dictionary<long, UserState>();
         _botResponses = new Dictionary<string, ICommand>
         {
@@ -30,18 +35,17 @@ public class ClientUpdateHandler : IUpdateHandler
             ["/start"] = new BotCommand($"Вы зашли в бот, где можно зарегистрироваться в очередь и отслеживать время до получения услуги.\n" +
                                         $"Для того, чтобы посмотреть команды, введите команду /menu",
                 UserState.ClientStart),
-            ["/register"] = new BotCommand("Введите название организации, в которой хотите попасть в очередь",
-                UserState.WaitingClientForNameOrganization),
-            ["/mytime"] = new TakeMyTime(),
-            ["/clientsbeforeme"] = new ClientBefore(),
+            ["/register"] = new GetNameOrganization(_queries),
+            ["/mytime"] = new TakeMyTime(_queries),
+            ["/clientsbeforeme"] = new ClientBefore(_queries),
             ["default"] = new BotCommand("Извините, я Вас не понимаю, вот список доступных команд /menu",
                 UserState.ClientStart)
         };
 
-        _commands = new ICommand[]
+        _commandsBot = new ICommand[]
         {
-            new RegisterClient(_organization),
-            new GetNameService(_organization)
+            new RegisterClient(_organization, _queries),
+            new GetNameService(_organization, _commands)
         };
     }
 
@@ -63,7 +67,7 @@ public class ClientUpdateHandler : IUpdateHandler
                 await _botResponses["default"].ExecuteAsync(_botClient, chatId, _userStates, messageText);
             else
             {
-                await _commands
+                await _commandsBot
                     .First(x => x.Accept(userState))
                     .ExecuteAsync(_botClient, chatId, _userStates, messageText);
             }
