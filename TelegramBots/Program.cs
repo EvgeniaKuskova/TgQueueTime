@@ -13,9 +13,13 @@ internal static class Program
         var serviceProvider = services.BuildServiceProvider();
         var commands = serviceProvider.GetRequiredService<Commands>();
         var queries = serviceProvider.GetRequiredService<Queries>();
-        
-        var organizationBot = new OrganizationBot("",
+
+        var clientBot = new ClientBot("",
             commands, queries);
-        await organizationBot.Run();
+        await clientBot.Run();
+
+        //var organizationBot = new OrganizationBot("",
+            //commands, queries);
+        //await organizationBot.Run();
     }
 }
