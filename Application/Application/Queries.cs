@@ -63,12 +63,12 @@ public class Queries
         return await _queueService.GetAllClientsInQueueQuery(organization, windowNumber);
     }
 
-    public async Task<List<Service>> GetAllServices(long idOrganization)
+    public async Task<List<Service>> GetAllServices(string nameOrganization)
     {
-        var organizationEntity = await _organizationRepository.GetByIdAsync(idOrganization);
+        var organizationEntity = await _organizationRepository.GetByConditionsAsync(o => o.Name == nameOrganization);
         if (organizationEntity == null)
         {
-            throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");
+            throw new InvalidOperationException($"Организация с id {nameOrganization} не найдена.");
         }
         var organization = organizationEntity.ToDomain(_serviceRepository);
         return await _queueService.GetAllServices(organization);
