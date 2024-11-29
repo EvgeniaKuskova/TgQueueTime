@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using Domain;
+using Telegram.Bot;
 using TgQueueTime.Application;
 
 namespace TelegramBots.Command;
@@ -28,6 +29,7 @@ public class RegisterClient : ICommand
             {
                 await botClient.SendTextMessageAsync(chatId, "Такой организации не существует, повторите ввод");
                 userStates[chatId] = UserState.WaitingClientForNameOrganization;
+                return;
             }
         }
 
@@ -38,7 +40,25 @@ public class RegisterClient : ICommand
                 await botClient.SendTextMessageAsync(chatId, e.Message);
             throw;
         }
-        await botClient.SendTextMessageAsync(chatId, "Введите название услуги");
+
+        try
+        {
+            var task = _queries.GetAllServices(_organization[chatId]);
+            var allServices = task.Result;
+            var nameServices = allServices.Select(x => x.Name).ToArray();
+            string servicesString = string.Join(" | ", nameServices);
+
+            await botClient.SendTextMessageAsync(chatId, $"Выбери услугу, где нужно занять очередь ( | это разделитель): {servicesString}");
+        }
+
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            if (e is InvalidOperationException)
+                await botClient.SendTextMessageAsync(chatId, e.Message);
+            throw;
+        }
+        //await botClient.SendTextMessageAsync(chatId, "Введите название услуги");
         userStates[chatId] = UserState.WaitingClientForNameService;
     }
 
