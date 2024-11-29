@@ -55,7 +55,7 @@ public class Commands
 
     public async Task UpdateServiceAverageTimeCommand(long idOrganization, string serviceName, TimeSpan newAverageTime)
     {
-        var organizationEntity = await _organizationRepository.GetByIdAsync(idOrganization);
+        var organizationEntity = await _organizationRepository.GetByKeyAsync(idOrganization);
         if (organizationEntity == null)
         {
             throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");
@@ -78,7 +78,7 @@ public class Commands
 
     public async Task AddService(long idOrganization, string serviceName, TimeSpan averageTime, List<int> windowNumbers)
     {
-        var organizationEntity = await _organizationRepository.GetByIdAsync(idOrganization);
+        var organizationEntity = await _organizationRepository.GetByKeyAsync(idOrganization);
         if (organizationEntity == null)
         {
             throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");
@@ -96,7 +96,7 @@ public class Commands
 
     public async Task MoveQueue(long idOrganization, int windowNumber)
     {
-        var organizationEntity = await _organizationRepository.GetByIdAsync(idOrganization);
+        var organizationEntity = await _organizationRepository.GetByKeyAsync(idOrganization);
         if (organizationEntity == null)
         {
             throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");

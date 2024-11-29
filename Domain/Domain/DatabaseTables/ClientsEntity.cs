@@ -7,7 +7,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 [Table("QueueClients")]
 public class ClientsEntity
 {
-    [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id { get; set; }
 

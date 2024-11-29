@@ -32,7 +32,7 @@ public class Queries
 
     public async Task<TimeSpan> GetClientTimeQuery(long idClient)
     {
-        var clientEntity = await _clientRepository.GetByIdAsync(idClient);
+        var clientEntity = await _clientRepository.GetByConditionsAsync(client => client.UserId == idClient);
         if (clientEntity == null)
         {
             throw new InvalidOperationException($"Клиент с id {idClient} не стоит в очереди");
@@ -43,7 +43,7 @@ public class Queries
 
     public async Task<int> GetNumberClientsBeforeQuery(long idClient)
     {
-        var clientEntity = await _clientRepository.GetByIdAsync(idClient);
+        var clientEntity = await _clientRepository.GetByConditionsAsync(client => client.UserId == idClient);
         if (clientEntity == null)
         {
             throw new InvalidOperationException($"Клиент с id {idClient} не стоит в очереди");
@@ -54,7 +54,7 @@ public class Queries
 
     public async Task<List<Client>> GetAllClientsInQueueQuery(long idOrganization, int windowNumber)
     {
-        var organizationEntity = await _organizationRepository.GetByIdAsync(idOrganization);
+        var organizationEntity = await _organizationRepository.GetByConditionsAsync(org => org.Id == idOrganization);
         if (organizationEntity == null)
         {
             throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");

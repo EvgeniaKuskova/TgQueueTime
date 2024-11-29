@@ -34,9 +34,11 @@ public class Repository<T> : IRepository<T> where T : class
         await _context.SaveChangesAsync();
     }
 
-    public async Task<T?> GetByIdAsync(long id)
+    // оно не работает
+    public async Task<T?> GetByKeyAsync(params object[] key)
     {
-        return await _context.Set<T>().FindAsync(id);
+        var a = _context.Set<T>();
+        return await _context.Set<T>().FindAsync(key);
     }
 
     public IQueryable<T> GetAllByValueAsync<TProperty>(Expression<Func<T, TProperty>> propertySelector, TProperty value)

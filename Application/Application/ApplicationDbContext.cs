@@ -26,7 +26,7 @@ public class ApplicationDbContext : DbContext
         {
             var basePath = AppDomain.CurrentDomain.BaseDirectory;
             var dbPath = Path.Combine(basePath, "..", "..", "..", "Infrastructure", "Database", "Database.db");
-            dbPath = Path.GetFullPath("C:\\Users\\anaas\\OneDrive\\Рабочий стол\\учеба2\\TgQueueTime\\Infrastructure\\Infrastructure\\Database\\Database.db");
+            dbPath = Path.GetFullPath("C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Infrastructure\\Infrastructure\\Database\\Database.db");
             optionsBuilder.UseSqlite($"Data Source={dbPath};");
         }
     }

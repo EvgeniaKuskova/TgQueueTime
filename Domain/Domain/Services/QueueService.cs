@@ -91,7 +91,7 @@ public class QueueService
             {
                 // Клиент уже обслуживается: его StartTime + AverageTime
                 var lastServiceId = queueServices.First(qs => qs.QueueId == queue.Id).ServiceId;
-                var lastService = await _serviceRepository.GetByIdAsync(lastServiceId);
+                var lastService = await _serviceRepository.GetByKeyAsync(lastServiceId);
 
                 // Парсим StartTime в TimeSpan
                 var startTime = DateTime.Parse(lastStartedClient.StartTime);
@@ -107,7 +107,7 @@ public class QueueService
             foreach (var clientInQueue in clientsInQueue.Where(c => c.Position > (lastStartedClient?.Position ?? 0)))
             {
                 var clientServiceId = queueServices.First(qs => qs.QueueId == queue.Id).ServiceId;
-                var clientService = await _serviceRepository.GetByIdAsync(clientServiceId);
+                var clientService = await _serviceRepository.GetByKeyAsync(clientServiceId);
 
                 queueStartTime += TimeSpan.Parse(clientService.AverageTime);
             }
@@ -118,9 +118,9 @@ public class QueueService
                 optimalStartTime = queueStartTime;
                 optimalQueue = queue;
             }
+        }
 
-
-            if (optimalQueue == null)
+        if (optimalQueue == null)
             {
                 throw new InvalidOperationException(
                     $"Не удалось найти оптимальную очередь для клиента в организации '{organization.Name}'.");
@@ -142,7 +142,6 @@ public class QueueService
 
 
             await _clientRepository.AddAsync(clientEntity);
-        }
     }
 
     public Task CreateQueueAsync(Organization organization, int windowNumber)
@@ -152,7 +151,7 @@ public class QueueService
 
     public async Task<TimeSpan> GetClientTimeQuery(ClientsEntity client)
     {
-        var queueServiceEntity = await _queueServicesRepository.GetByIdAsync(client.QueueServiceId);
+        var queueServiceEntity = await _queueServicesRepository.GetByKeyAsync(client.QueueServiceId);
         var queueId = queueServiceEntity.QueueId;
 
         var clientsInQueue = await _clientRepository
@@ -178,7 +177,7 @@ public class QueueService
         // Время, прошедшее с начала обслуживания последнего клиента
         var timeElapsed = DateTime.Now - lastClientStartTime;
 
-        var lastClientServiceEntity = await _serviceRepository.GetByIdAsync(queueServiceEntity.ServiceId);
+        var lastClientServiceEntity = await _serviceRepository.GetByKeyAsync(queueServiceEntity.ServiceId);
         var lastClientServiceAverageTime = TimeSpan.Parse(lastClientServiceEntity.AverageTime);
 
         // Оставшееся время на обслуживание последнего клиента
@@ -190,7 +189,7 @@ public class QueueService
 
         foreach (var clientInQueue in clientsInQueue.Where(c => c.Position > client.Position))
         {
-            var clientServiceEntity = await _serviceRepository.GetByIdAsync(clientInQueue.QueueServiceId);
+            var clientServiceEntity = await _serviceRepository.GetByKeyAsync(clientInQueue.QueueServiceId);
             var clientServiceAverageTime = TimeSpan.Parse(clientServiceEntity.AverageTime);
 
             totalWaitTime += clientServiceAverageTime;
@@ -220,14 +219,14 @@ public class QueueService
 
         if (currentClient != null)
         {
-            var queueServiceEntity = await _queueServicesRepository.GetByIdAsync(currentClient.QueueServiceId);
+            var queueServiceEntity = await _queueServicesRepository.GetByKeyAsync(currentClient.QueueServiceId);
             if (queueServiceEntity == null)
             {
                 throw new InvalidOperationException(
                     $"Связь QueueService для клиента с ID {currentClient.Id} не найдена.");
             }
 
-            var serviceEntity = await _serviceRepository.GetByIdAsync(queueServiceEntity.ServiceId);
+            var serviceEntity = await _serviceRepository.GetByKeyAsync(queueServiceEntity.ServiceId);
             if (serviceEntity == null)
             {
                 throw new InvalidOperationException($"Услуга с ID {queueServiceEntity.ServiceId} не найдена.");
@@ -282,7 +281,7 @@ public class QueueService
         // Преобразуем сущности клиентов в доменные модели
         var domainClients = clientsInQueue.Select(clientEntity =>
         {
-            var serviceEntity = _serviceRepository.GetByIdAsync(clientEntity.QueueServiceId).Result;
+            var serviceEntity = _serviceRepository.GetByKeyAsync(clientEntity.QueueServiceId).Result;
             var service = new Service(serviceEntity.Name, TimeSpan.Parse(serviceEntity.AverageTime));
             return new Client(clientEntity.UserId, service);
         }).ToList();
