@@ -127,7 +127,7 @@ public class RepositoryTests
         await serviceRepository.AddAsync(newService);
         await context.SaveChangesAsync();
         
-        var entityInDb = await serviceRepository.GetByIdAsync(newService.Id);
+        var entityInDb = await serviceRepository.GetByKeyAsync(newService.Id);
         
         Assert.NotNull(entityInDb);
         Assert.Equal("Existing Entity", entityInDb.Name);
@@ -139,7 +139,7 @@ public class RepositoryTests
         var context = GetInMemoryDbContext();
         var repository = new Repository<ServiceEntity>(context);
 
-        var entityInDb = await repository.GetByIdAsync(5);
+        var entityInDb = await repository.GetByKeyAsync(5);
 
         Assert.Null(entityInDb);
     }

@@ -96,7 +96,7 @@ public class CommandsTests
         Assert.Single(clientsInQueue);
         var client = clientsInQueue.First();
 
-        var organizationInDb = await organizationRepository.GetByIdAsync(organization.Id);
+        var organizationInDb = await organizationRepository.GetByKeyAsync(organization.Id);
         Assert.NotNull(organizationInDb);
 
         var serviceInDb = await serviceRepository.GetByConditionsAsync(

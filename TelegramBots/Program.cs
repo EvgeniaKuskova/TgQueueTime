@@ -13,9 +13,9 @@ internal static class Program
         var serviceProvider = services.BuildServiceProvider();
         var commands = serviceProvider.GetRequiredService<Commands>();
         var queries = serviceProvider.GetRequiredService<Queries>();
-        var clientBot = new ClientBot("7649309220:AAEYnahNNtjr4KwGMk0AICh_TUSYVrnH_4k",
+        var clientBot = new ClientBot("",
             commands, queries);
-        var organizationBot = new OrganizationBot("7547068208:AAGon0KmcOaFpD2VJO_UmGiqzuSs86J6TBU",
+        var organizationBot = new OrganizationBot("",
             commands, queries);
         
         await Task.WhenAll(clientBot.Run(), organizationBot.Run());
