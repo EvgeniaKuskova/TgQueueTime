@@ -1,38 +1,36 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\TelegramBots\\TelegramBots.csproj": {}
+    "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\TelegramBots\\TelegramBots.csproj": {}
   },
   "projects": {
-    "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Application\\Application.csproj": {
+    "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Application\\Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Application\\Application.csproj",
+        "projectUniqueName": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Application\\Application.csproj",
         "projectName": "Application",
-        "projectPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Application\\Application.csproj",
-        "packagesPath": "C:\\Users\\КусЯ\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Application\\obj\\",
+        "projectPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Application\\Application.csproj",
+        "packagesPath": "C:\\Users\\kostr\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Application\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\КусЯ\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\kostr\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Domain\\Domain.csproj"
+              "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Domain\\Domain.csproj": {
+                "projectPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Domain\\Domain.csproj"
               },
-              "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Infrastructure\\Infrastructure.csproj": {
-                "projectPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Infrastructure\\Infrastructure.csproj"
+              "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Infrastructure\\Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Infrastructure\\Infrastructure.csproj"
               }
             }
           }
@@ -47,9 +45,15 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
-              "version": "[9.0.0, )"
+              "version": "[6.0.0, )"
             }
           },
           "imports": [
@@ -68,36 +72,34 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Users\\КусЯ\\.dotnet\\sdk\\6.0.418\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.427\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Domain\\Domain.csproj": {
+    "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Domain\\Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Domain\\Domain.csproj",
+        "projectUniqueName": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Domain\\Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Domain\\Domain.csproj",
-        "packagesPath": "C:\\Users\\КусЯ\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Domain\\obj\\",
+        "projectPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Domain\\Domain.csproj",
+        "packagesPath": "C:\\Users\\kostr\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\КусЯ\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\kostr\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Infrastructure\\Infrastructure.csproj": {
-                "projectPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Infrastructure\\Infrastructure.csproj"
+              "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Infrastructure\\Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Infrastructure\\Infrastructure.csproj"
               }
             }
           }
@@ -127,28 +129,26 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Users\\КусЯ\\.dotnet\\sdk\\6.0.418\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.427\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Infrastructure\\Infrastructure.csproj": {
+    "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Infrastructure\\Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Infrastructure\\Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Infrastructure\\Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\КусЯ\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Infrastructure\\obj\\",
+        "projectPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Infrastructure\\Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\kostr\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\КусЯ\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\kostr\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -177,7 +177,7 @@
             },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
-              "version": "[9.0.0, )"
+              "version": "[6.0.0, )"
             }
           },
           "imports": [
@@ -196,36 +196,40 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Users\\КусЯ\\.dotnet\\sdk\\6.0.418\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.427\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\TelegramBots\\TelegramBots.csproj": {
+    "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\TelegramBots\\TelegramBots.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\TelegramBots\\TelegramBots.csproj",
+        "projectUniqueName": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\TelegramBots\\TelegramBots.csproj",
         "projectName": "TelegramBots",
-        "projectPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\TelegramBots\\TelegramBots.csproj",
-        "packagesPath": "C:\\Users\\КусЯ\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\TelegramBots\\obj\\",
+        "projectPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\TelegramBots\\TelegramBots.csproj",
+        "packagesPath": "C:\\Users\\kostr\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\TelegramBots\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\КусЯ\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\kostr\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\TgQueueTime\\TgQueueTime.csproj": {
-                "projectPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\TgQueueTime\\TgQueueTime.csproj"
+              "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Application\\Application.csproj": {
+                "projectPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Application\\Application.csproj"
+              },
+              "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Domain\\Domain.csproj": {
+                "projectPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Domain\\Domain.csproj"
+              },
+              "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\TgQueueTime\\TgQueueTime.csproj": {
+                "projectPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\TgQueueTime\\TgQueueTime.csproj"
               }
             }
           }
@@ -261,39 +265,37 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Users\\КусЯ\\.dotnet\\sdk\\6.0.418\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.427\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\TgQueueTime\\TgQueueTime.csproj": {
+    "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\TgQueueTime\\TgQueueTime.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\TgQueueTime\\TgQueueTime.csproj",
+        "projectUniqueName": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\TgQueueTime\\TgQueueTime.csproj",
         "projectName": "TgQueueTime",
-        "projectPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\TgQueueTime\\TgQueueTime.csproj",
-        "packagesPath": "C:\\Users\\КусЯ\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\TgQueueTime\\obj\\",
+        "projectPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\TgQueueTime\\TgQueueTime.csproj",
+        "packagesPath": "C:\\Users\\kostr\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\TgQueueTime\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\КусЯ\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\kostr\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Application\\Application.csproj": {
-                "projectPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Application\\Application.csproj"
+              "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Application\\Application.csproj": {
+                "projectPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Application\\Application.csproj"
               },
-              "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Infrastructure\\Infrastructure.csproj": {
-                "projectPath": "C:\\Users\\КусЯ\\RiderProjects\\TgQueueTime5\\Infrastructure\\Infrastructure.csproj"
+              "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Infrastructure\\Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\kostr\\DynamicQueueProject\\TgQueueTime\\Infrastructure\\Infrastructure.csproj"
               }
             }
           }
@@ -308,9 +310,27 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
-              "version": "[9.0.0, )"
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.Extensions.DependencyInjection.Abstractions": {
+              "target": "Package",
+              "version": "[6.0.0, )"
             },
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",
@@ -337,7 +357,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Users\\КусЯ\\.dotnet\\sdk\\6.0.418\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.427\\RuntimeIdentifierGraph.json"
         }
       }
     }
