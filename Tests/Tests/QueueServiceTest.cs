@@ -1,9 +1,18 @@
-﻿using Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Domain.Entities;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using TgQueueTime.Application;
 using Xunit;
+using AppDomain = System.AppDomain;
+using DateTime = System.DateTime;
+using Guid = System.Guid;
+using TimeSpan = System.TimeSpan;
 
 namespace Domain.Services;
 
