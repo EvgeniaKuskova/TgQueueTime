@@ -281,7 +281,9 @@ public class QueueService
         // Преобразуем сущности клиентов в доменные модели
         var domainClients = clientsInQueue.Select(clientEntity =>
         {
-            var serviceEntity = _serviceRepository.GetByKeyAsync(clientEntity.QueueServiceId).Result;
+            var queueServiceId = clientEntity.QueueServiceId;
+            var serviceId = _queueServicesRepository.GetByConditionsAsync(key => key.Id == queueServiceId).Result.ServiceId;
+            var serviceEntity = _serviceRepository.GetByConditionsAsync(key => key.Id == serviceId).Result;
             var service = new Service(serviceEntity.Name, TimeSpan.Parse(serviceEntity.AverageTime));
             return new Client(clientEntity.UserId, service);
         }).ToList();
