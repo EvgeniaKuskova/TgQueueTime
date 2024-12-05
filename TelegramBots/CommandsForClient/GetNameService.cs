@@ -9,7 +9,6 @@ public class GetNameService : ICommand
     private readonly Dictionary<long, string> _organization;
     private readonly Commands _commands;
     private readonly Queries _queries;
-    private List<Service> _allServices;
 
     public GetNameService(Dictionary<long, string> organization, Commands commands, Queries queries)
     {
@@ -33,6 +32,7 @@ public class GetNameService : ICommand
                 userStates[chatId] = UserState.WaitingClientForNameService;
                 return;
             }
+            await _commands.AddClientToQueueCommand(chatId, nameService, _organization[chatId]);
         }
 
         catch (Exception e)
@@ -40,17 +40,6 @@ public class GetNameService : ICommand
             Console.WriteLine(e);
             if (e is InvalidOperationException)
                 await botClient.SendTextMessageAsync(chatId, e.Message);
-            throw;
-        }
-        try
-        {
-            await _commands.AddClientToQueueCommand(chatId, nameService, _organization[chatId]);
-        }
-
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            await botClient.SendTextMessageAsync(chatId, "Извните, сохранить услугу не получилось.");
             throw;
         }
 
