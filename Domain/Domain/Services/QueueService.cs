@@ -151,6 +151,7 @@ public class QueueService
 
     public async Task<TimeSpan> GetClientTimeQuery(ClientsEntity client)
     {
+        if (!(client.StartTime is null)) return TimeSpan.Zero;
         var queueServiceEntity = await _queueServicesRepository.GetByKeyAsync(client.QueueServiceId);
         var queueId = queueServiceEntity.QueueId;
 
@@ -187,14 +188,14 @@ public class QueueService
             ? remainingTimeForLastClient
             : TimeSpan.Zero;
 
-        foreach (var clientInQueue in clientsInQueue.Where(c => c.Position > client.Position))
+        foreach (var clientInQueue in clientsInQueue.Where(c => (c.Position < client.Position) && (c.StartTime is null)))
         {
-            var clientServiceEntity = await _serviceRepository.GetByKeyAsync(clientInQueue.QueueServiceId);
-            var clientServiceAverageTime = TimeSpan.Parse(clientServiceEntity.AverageTime);
+            var queueServiceId = clientInQueue.QueueServiceId;
+            var serviceId = _queueServicesRepository.GetByConditionsAsync(key => key.Id == queueServiceId).Result.ServiceId;
+            var clientServiceAverageTime = _serviceRepository.GetByConditionsAsync(key => key.Id == serviceId).Result.AverageTime;
 
-            totalWaitTime += clientServiceAverageTime;
+            totalWaitTime += TimeSpan.Parse(clientServiceAverageTime);
         }
-
         return totalWaitTime;
     }
 

@@ -12,17 +12,20 @@ public class Commands
     private readonly IRepository<OrganizationEntity> _organizationRepository;
     private readonly IRepository<ServiceEntity?> _serviceRepository;
     private readonly IRepository<QueueEntity> _queueRepository;
+    private readonly IRepository<ClientsEntity> _clientRepository;
 
     public Commands(OrganizationService organizationService, QueueService queueService,
         IRepository<OrganizationEntity> organizationRepository,
         IRepository<ServiceEntity?> serviceRepository,
-        IRepository<QueueEntity> queueRepository)
+        IRepository<QueueEntity> queueRepository,
+        IRepository<ClientsEntity> clientRepository)
     {
         _organizationService = organizationService;
         _queueService = queueService;
         _organizationRepository = organizationRepository;
         _serviceRepository = serviceRepository;
         _queueRepository = queueRepository;
+        _clientRepository = clientRepository;
     }
 
     public async Task RegisterOrganizationCommand(long idOrganization, string organizationName)
@@ -33,6 +36,11 @@ public class Commands
 
     public async Task AddClientToQueueCommand(long idClient, string serviceName, string organizationName)
     {
+        var clients = await _clientRepository.GetByConditionsAsync(c => c.UserId == idClient);
+        if (clients != null)
+        {
+            throw new InvalidOperationException("Вы уже регистрировались ранее");
+        }
         var organizationEntity = await _organizationRepository.GetByConditionsAsync(o => o.Name == organizationName);
         if (organizationEntity == null)
         {
