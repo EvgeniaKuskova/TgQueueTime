@@ -20,8 +20,8 @@ public class RegisterClient : ICommand
     {
         try
         {
-            var task = _queries.GetAllOrganizations();
-            var allOrganizations = task.Result;
+            var taskGetAllOrganizations = _queries.GetAllOrganizations();
+            var allOrganizations = taskGetAllOrganizations.Result;
             var nameOrganizations = allOrganizations.Select(x => x.Name).ToArray();
             if (Array.Exists(nameOrganizations, name => name == messageText))
                 _organization[chatId] = messageText;
@@ -31,20 +31,9 @@ public class RegisterClient : ICommand
                 userStates[chatId] = UserState.WaitingClientForNameOrganization;
                 return;
             }
-        }
 
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            if (e is InvalidOperationException)
-                await botClient.SendTextMessageAsync(chatId, e.Message);
-            throw;
-        }
-
-        try
-        {
-            var task = _queries.GetAllServices(_organization[chatId]);
-            var allServices = task.Result;
+            var taskGetAllServices = _queries.GetAllServices(_organization[chatId]);
+            var allServices = taskGetAllServices.Result;
             var nameServices = allServices.Select(x => x.Name).ToArray();
             string servicesString = string.Join(" | ", nameServices);
 
@@ -58,7 +47,7 @@ public class RegisterClient : ICommand
                 await botClient.SendTextMessageAsync(chatId, e.Message);
             throw;
         }
-        //await botClient.SendTextMessageAsync(chatId, "Введите название услуги");
+
         userStates[chatId] = UserState.WaitingClientForNameService;
     }
 
