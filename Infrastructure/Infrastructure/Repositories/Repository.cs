@@ -35,11 +35,21 @@ public class Repository<T> : IRepository<T> where T : class
     }
 
     // оно не работает
-    public async Task<T?> GetByKeyAsync(params object[] key)
+    /*public async Task<T?> GetByKeyAsync(params object[] key)
     {
         var a = _context.Set<T>();
         return await _context.Set<T>().FindAsync(key);
+    }*/
+    
+    public async Task<T?> GetByKeyAsync(params object[] key)
+    {
+        if (key.Length != 1)
+            throw new ArgumentException("Ожидается один первичный ключ.");
+
+        var id = key[0];
+        return await _context.Set<T>().FirstOrDefaultAsync(e => EF.Property<object>(e, "Id").Equals(id));
     }
+
 
     public IQueryable<T> GetAllByValueAsync<TProperty>(Expression<Func<T, TProperty>> propertySelector, TProperty value)
     {

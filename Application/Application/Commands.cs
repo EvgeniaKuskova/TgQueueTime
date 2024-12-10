@@ -14,7 +14,8 @@ public class Commands
     private readonly IRepository<QueueEntity> _queueRepository;
     private readonly IRepository<ClientsEntity> _clientRepository;
 
-    public Commands(OrganizationService organizationService, QueueService queueService,
+    public Commands(OrganizationService organizationService,
+        QueueService queueService,
         IRepository<OrganizationEntity> organizationRepository,
         IRepository<ServiceEntity?> serviceRepository,
         IRepository<QueueEntity> queueRepository,

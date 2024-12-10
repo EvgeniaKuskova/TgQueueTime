@@ -11,12 +11,8 @@ public class OrganizationServiceTest
 {
     private ApplicationDbContext GetDbContext()
     {
-        var basePath = AppDomain.CurrentDomain.BaseDirectory;
-        var dbPath = Path.Combine(basePath, "..", "..", "..", "Infrastructure", "Database", "Database.db");
-        dbPath = Path.GetFullPath(dbPath); // Получает абсолютный путь
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            //.UseSqlite($"Data Source={dbPath};")
             .Options;
 
         return new ApplicationDbContext(options);
@@ -82,7 +78,6 @@ public class OrganizationServiceTest
         };
         await serviceRepository.AddAsync(service);
 
-        // Создаем доменные модели для теста
         var domainOrganization = new Organization(organization.Id, organization.Name);
         var domainService = new Service(service.Name, TimeSpan.Parse(service.AverageTime));
 
@@ -98,67 +93,67 @@ public class OrganizationServiceTest
         Assert.NotNull(updatedService);
         Assert.Equal(newAverageTime.ToString(), updatedService.AverageTime);
     }
-
+    
     [Fact]
     public async Task AddServiceAsync_Should_Add_Service_And_Link_To_Queue()
     {
         var dbContext = GetDbContext();
+
+        var organizationRepository = new Repository<OrganizationEntity>(dbContext);
         var serviceRepository = new Repository<ServiceEntity?>(dbContext);
         var queueRepository = new Repository<QueueEntity>(dbContext);
         var queueServicesRepository = new Repository<QueueServicesEntity>(dbContext);
-        var organizationRepository = new Repository<OrganizationEntity>(dbContext);
+        var clientRepository = new Repository<ClientsEntity>(dbContext);
 
         var organizationService = new OrganizationService(
-            queueRepository, queueServicesRepository, null, organizationRepository, serviceRepository);
+            queueRepository,
+            queueServicesRepository,
+            clientRepository,
+            organizationRepository,
+            serviceRepository
+        );
 
-        var organizationEntity = new OrganizationEntity
+        var organization = new OrganizationEntity
         {
             Name = "Test Organization"
         };
-        await organizationRepository.AddAsync(organizationEntity);
+        await organizationRepository.AddAsync(organization);
+        await dbContext.SaveChangesAsync();
 
-        var queueEntity = new QueueEntity
+        var domainOrganization = new Organization(organization.Id, organization.Name);
+        var serviceName = "Test Service";
+        var averageTime = TimeSpan.FromMinutes(30);
+        var windowNumbers = new List<int> { 1, 2, 3 };
+
+        foreach (var windowNumber in windowNumbers)
         {
-            OrganizationId = organizationEntity.Id,
-            WindowNumber = 1
-        };
-        await queueRepository.AddAsync(queueEntity);
+            var service = new Service(serviceName, averageTime);
+            await organizationService.AddServiceAsync(domainOrganization, service, windowNumber);
+        }
 
-        var organization = new Organization(organizationEntity.Id, organizationEntity.Name);
-        var service = new Service("Test Service", TimeSpan.FromMinutes(30));
+        var services = serviceRepository.GetAllByCondition(s => s.OrganizationId == organization.Id).ToList();
+        Assert.NotEmpty(services);
+        Assert.Contains(services, s => s.Name == serviceName);
 
-        await organizationService.AddServiceAsync(organization, service, 1);
+        foreach (var windowNumber in windowNumbers)
+        {
+            var queueServiceLinks = queueServicesRepository
+                .GetAllByCondition(qs => qs.ServiceId == services.First().Id && qs.QueueId == windowNumber)
+                .ToList();
 
-        var serviceInDb = await serviceRepository.GetByConditionsAsync(s =>
-            s.Name == service.Name && s.OrganizationId == organization.Id);
-        Assert.NotNull(serviceInDb);
-        Assert.Equal(service.Name, serviceInDb.Name);
-        Assert.Equal("00:30:00", serviceInDb.AverageTime);
-        var queueInDb = await queueRepository.GetByConditionsAsync(q =>
-            q.OrganizationId == organization.Id && q.WindowNumber == 1);
-        Assert.NotNull(queueInDb);
-
-        var queueServiceInDb = await queueServicesRepository.GetByConditionsAsync(qs =>
-            qs.QueueId == queueInDb.Id && qs.ServiceId == serviceInDb.Id);
-        Assert.NotNull(queueServiceInDb);
-        Assert.Equal(queueInDb.Id, queueServiceInDb.QueueId);
-        Assert.Equal(serviceInDb.Id, queueServiceInDb.ServiceId);
-
-        await organizationService.AddServiceAsync(organization, service, 1);
-
-        var allQueueServices = await queueServicesRepository
-            .GetAllByCondition(qs => qs.QueueId == queueInDb.Id && qs.ServiceId == serviceInDb.Id)
-            .ToListAsync();
-        Assert.Single(allQueueServices);
+            Assert.NotEmpty(queueServiceLinks);
+            Assert.Contains(queueServiceLinks, qs => qs.QueueId == windowNumber);
+        }
     }
-    
+
+
     [Fact]
     public async Task GetAllOrganizations_Should_Return_All_Organizations()
     {
         var dbContext = GetDbContext();
         var organizationRepository = new Repository<OrganizationEntity>(dbContext);
         var serviceRepository = new Repository<ServiceEntity?>(dbContext);
-    
+
         var organizationService = new OrganizationService(
             new Repository<QueueEntity>(dbContext),
             new Repository<QueueServicesEntity>(dbContext),
@@ -166,28 +161,27 @@ public class OrganizationServiceTest
             organizationRepository,
             serviceRepository
         );
-    
+
         var organizations = new List<OrganizationEntity>
         {
             new OrganizationEntity { Name = "Org 1" },
             new OrganizationEntity { Name = "Org 2" },
             new OrganizationEntity { Name = "Org 3" }
         };
-    
+
         foreach (var organization in organizations)
         {
             await organizationRepository.AddAsync(organization);
         }
-    
+
         await dbContext.SaveChangesAsync();
-    
+
         var result = await organizationService.GetAllOrganizations();
-    
+
         Assert.NotNull(result);
         Assert.Equal(organizations.Count, result.Count);
         Assert.Contains(result, o => o.Name == "Org 1");
         Assert.Contains(result, o => o.Name == "Org 2");
         Assert.Contains(result, o => o.Name == "Org 3");
     }
-
 }

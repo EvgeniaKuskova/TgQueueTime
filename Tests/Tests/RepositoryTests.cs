@@ -9,16 +9,6 @@ public class RepositoryTests
 {
     private ApplicationDbContext GetInMemoryDbContext()
     {
-        /*var basePath = AppDomain.CurrentDomain.BaseDirectory;
-        var dbPath = Path.Combine(basePath, "..", "..", "..", "Infrastructure", "Database", "Database.db");
-        dbPath = Path.GetFullPath(dbPath); // Получает абсолютный путь
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            //.UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .UseSqlite($"Data Source={dbPath};")
-            .Options;
-
-        return new ApplicationDbContext(options);*/
-        
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;

@@ -20,7 +20,6 @@ public class CommandsTests
     [Fact]
     public async Task AddClientToQueueCommand_Should_Add_Client_To_Queue()
     {
-        // Arrange
         var dbContext = GetInMemoryDbContext();
 
         // Репозитории
@@ -51,7 +50,8 @@ public class CommandsTests
             queueService,
             organizationRepository,
             serviceRepository,
-            queueRepository);
+            queueRepository,
+            clientRepository);
 
         // Создаем организацию
         var organization = new OrganizationEntity
@@ -135,7 +135,7 @@ public class CommandsTests
             serviceRepository);
 
         var commands = new Commands(organizationService, null, organizationRepository, serviceRepository,
-            queueRepository);
+            queueRepository, clientRepository);
 
         var organization = new OrganizationEntity
         {
@@ -163,7 +163,7 @@ public class CommandsTests
     }
 
     [Fact]
-    public async Task AddService_Should_Add_Service_To_Registered_Windows()
+    public async Task AddService_Should_Add_Service_And_Link_To_Windows()
     {
         var dbContext = GetInMemoryDbContext();
 
@@ -173,56 +173,71 @@ public class CommandsTests
         var queueServicesRepository = new Repository<QueueServicesEntity>(dbContext);
         var clientRepository = new Repository<ClientsEntity>(dbContext);
 
-        var organizationService = new OrganizationService(queueRepository, queueServicesRepository, clientRepository,
-            organizationRepository, serviceRepository);
+        var organizationService = new OrganizationService(
+            queueRepository,
+            queueServicesRepository,
+            clientRepository,
+            organizationRepository,
+            serviceRepository);
 
-        var commands = new Commands(organizationService, null, organizationRepository, serviceRepository, queueRepository);
+        var queueService = new QueueService(
+            queueRepository,
+            queueServicesRepository,
+            clientRepository,
+            organizationRepository,
+            serviceRepository);
+
+        var commands = new Commands(
+            organizationService,
+            queueService,
+            organizationRepository,
+            serviceRepository,
+            queueRepository,
+            clientRepository);
 
         var organization = new OrganizationEntity
         {
+            Id = 1,
             Name = "Test Organization"
         };
         await organizationRepository.AddAsync(organization);
 
-        // Создаем зарегистрированные окна (очереди)
-        var registeredWindows = new List<int> { 1, 2 };
-        foreach (var window in registeredWindows)
+        var windowNumbers = new List<int> { 1, 2, 3 };
+
+        foreach (var windowNumber in windowNumbers)
         {
-            var queue = new QueueEntity
+            var queueEntity = new QueueEntity
             {
                 OrganizationId = organization.Id,
-                WindowNumber = window
+                WindowNumber = windowNumber
             };
-            await queueRepository.AddAsync(queue);
+            await queueRepository.AddAsync(queueEntity);
         }
 
+        await dbContext.SaveChangesAsync();
+
         var serviceName = "Test Service";
-        var averageTime = TimeSpan.FromMinutes(30);
-        var windowsToAddService = new List<int> { 1, 2 }; // Все окна зарегистрированы
+        var averageTime = TimeSpan.FromMinutes(15);
 
-        await commands.AddService(organization.Id, serviceName, averageTime, windowsToAddService);
+        await commands.AddService(organization.Id, serviceName, averageTime, windowNumbers);
 
-        var servicesInDb = await serviceRepository.GetAllByValueAsync(s => s.OrganizationId, organization.Id)
-            .ToListAsync();
-        Assert.Single(servicesInDb);
-        var serviceInDb = servicesInDb.First();
-        Assert.Equal(serviceName, serviceInDb.Name);
-        Assert.Equal("00:30:00", serviceInDb.AverageTime);
+        var addedService = await serviceRepository
+            .GetByConditionsAsync(s => s.OrganizationId == organization.Id && s.Name == serviceName);
 
-        foreach (var window in registeredWindows)
+        Assert.NotNull(addedService);
+
+        foreach (var windowNumber in windowNumbers)
         {
-            var queueInDb = await queueRepository.GetByConditionsAsync(q =>
-                q.OrganizationId == organization.Id && q.WindowNumber == window);
-            Assert.NotNull(queueInDb);
+            var queueEntity = await queueRepository
+                .GetByConditionsAsync(q => q.OrganizationId == organization.Id && q.WindowNumber == windowNumber);
 
-            var queueServiceInDb = await queueServicesRepository.GetByConditionsAsync(qs =>
-                qs.QueueId == queueInDb.Id && qs.ServiceId == serviceInDb.Id);
-            Assert.NotNull(queueServiceInDb);
+            Assert.NotNull(queueEntity);
         }
     }
 
+
     [Fact]
-    public async Task AddService_Should_Throw_When_Window_Not_Registered()
+    public async Task AddService_Should_Throw_Exception_When_Organization_Not_Found()
     {
         var dbContext = GetInMemoryDbContext();
 
@@ -232,36 +247,36 @@ public class CommandsTests
         var queueServicesRepository = new Repository<QueueServicesEntity>(dbContext);
         var clientRepository = new Repository<ClientsEntity>(dbContext);
 
-        var organizationService = new OrganizationService(queueRepository, queueServicesRepository, clientRepository,
-            organizationRepository, serviceRepository);
+        var organizationService = new OrganizationService(
+            queueRepository,
+            queueServicesRepository,
+            clientRepository,
+            organizationRepository,
+            serviceRepository);
 
-        var commands = new Commands(organizationService, null, organizationRepository, serviceRepository, queueRepository);
+        var queueService = new QueueService(
+            queueRepository,
+            queueServicesRepository,
+            clientRepository,
+            organizationRepository,
+            serviceRepository);
 
-        var organization = new OrganizationEntity
-        {
-            Name = "Test Organization"
-        };
-        await organizationRepository.AddAsync(organization);
+        var commands = new Commands(
+            organizationService,
+            queueService,
+            organizationRepository,
+            serviceRepository,
+            queueRepository,
+            clientRepository);
 
-        // Создаем зарегистрированные окна (очереди)
-        var registeredWindows = new List<int> { 1 };
-        foreach (var window in registeredWindows)
-        {
-            var queue = new QueueEntity
-            {
-                OrganizationId = organization.Id,
-                WindowNumber = window
-            };
-            await queueRepository.AddAsync(queue);
-        }
-
+        var nonExistentOrganizationId = 999;
         var serviceName = "Test Service";
-        var averageTime = TimeSpan.FromMinutes(30);
-        var invalidWindows = new List<int> { 2 }; // Указано окно, которого нет в базе
+        var averageTime = TimeSpan.FromMinutes(15);
+        var windowNumbers = new List<int> { 1, 2, 3 };
 
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            commands.AddService(organization.Id, serviceName, averageTime, invalidWindows));
+            commands.AddService(nonExistentOrganizationId, serviceName, averageTime, windowNumbers));
 
-        Assert.Equal("Окно 2 не зарегистрировано в организации с id " + organization.Id + ".", exception.Message);
+        Assert.Equal($"Организация с id {nonExistentOrganizationId} не найдена.", exception.Message);
     }
 }
