@@ -31,7 +31,7 @@ public class ClientBefore : ICommand
         }
 
         await botClient.SendTextMessageAsync(chatId, $"Количество клиентов до вас {countClientsBefore}");
-        userStates[chatId] = UserState.ClientStart;
+        userStates[chatId] = UserState.WaitingNotification;
     }
 
     public bool Accept(UserState userState)

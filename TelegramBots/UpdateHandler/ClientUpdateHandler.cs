@@ -45,7 +45,8 @@ public class ClientUpdateHandler : IUpdateHandler
         _commandsBot = new ICommand[]
         {
             new RegisterClient(_organization, _queries),
-            new GetNameService(_organization, _commands, _queries)
+            new GetNameService(_organization, _commands, _queries),
+            new WaitingForNotification(_queries)
         };
     }
 
