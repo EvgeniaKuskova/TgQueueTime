@@ -31,8 +31,19 @@ public class Commands
 
     public async Task RegisterOrganizationCommand(long idOrganization, string organizationName)
     {
-        var organization = new Organization(idOrganization, organizationName);
-        await _organizationService.RegisterOrganizationAsync(organization);
+        try
+        {
+            var existingOrganization = await _organizationRepository.GetByConditionsAsync(o =>o.Id == idOrganization);
+            if (existingOrganization != null)
+                throw new InvalidOperationException("Организация уже зарегистрирована на этом аккаунте");
+
+            var organization = new Organization(idOrganization, organizationName);
+            await _organizationService.RegisterOrganizationAsync(organization);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Ошибка при регистрации организации");
+        }
     }
 
     public async Task AddClientToQueueCommand(long idClient, string serviceName, string organizationName)
