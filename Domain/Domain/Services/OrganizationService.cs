@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using CSharpFunctionalExtensions;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Services;

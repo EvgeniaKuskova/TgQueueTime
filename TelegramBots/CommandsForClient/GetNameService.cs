@@ -21,26 +21,26 @@ public class GetNameService : ICommand
         string messageText)
     {
         var nameService = messageText;
-        try
+        var services = await _queries.GetAllServices(_organization[chatId]);
+        if (services.IsFailure)
         {
-            var task = _queries.GetAllServices(_organization[chatId]);
-            var allServices = task.Result;
-            var nameServices = allServices.Select(x => x.Name).ToArray();
-            if (!(Array.Exists(nameServices, name => name == messageText)))
-            {
-                await botClient.SendTextMessageAsync(chatId, "Такой услуги не существует, повторите ввод");
-                userStates[chatId] = UserState.WaitingClientForNameService;
-                return;
-            }
-            await _commands.AddClientToQueueCommand(chatId, nameService, _organization[chatId]);
+            await botClient.SendTextMessageAsync(chatId, services.Error);
+            return;
         }
-
-        catch (Exception e)
+        
+        var nameAllServices = services.Value.Select(x => x.Name).ToArray();
+        if (!Array.Exists(nameAllServices, name => name == messageText))
         {
-            Console.WriteLine(e);
-            if (e is InvalidOperationException)
-                await botClient.SendTextMessageAsync(chatId, e.Message);
-            throw;
+            await botClient.SendTextMessageAsync(chatId, "Такой услуги не существует, повторите ввод");
+            userStates[chatId] = UserState.WaitingClientForNameService;
+            return;
+        }
+        var result = await _commands.AddClientToQueueCommand(chatId, nameService, _organization[chatId]);
+
+        if (result.IsFailure)
+        {
+            await botClient.SendTextMessageAsync(chatId, result.Error);
+            return;
         }
 
         await botClient.SendTextMessageAsync(chatId, "Вы зарегистрированы");

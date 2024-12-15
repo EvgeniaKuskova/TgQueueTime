@@ -16,20 +16,14 @@ public class TakeMyTime : ICommand
     public async Task ExecuteAsync(ITelegramBotClient botClient, long chatId, Dictionary<long, UserState> userStates,
         string messageText)
     {
-        try
+        var result = await _queries.GetClientTimeQuery(chatId);
+        if (result.IsFailure)
         {
-            var task = _queries.GetClientTimeQuery(chatId);
-            _myTime = task.Result;
+            await botClient.SendTextMessageAsync(chatId, result.Error);
+            return;
         }
-
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            if (e is InvalidOperationException)
-                await botClient.SendTextMessageAsync(chatId, e.Message);
-            throw;
-        }
-
+            
+        _myTime = result.Value;
         await botClient.SendTextMessageAsync(chatId, $"Ваше время ожидания составляет {_myTime}");
         userStates[chatId] = UserState.ClientStart;
     }

@@ -2,6 +2,7 @@
 using Domain.Entities;
 using Domain.Services;
 using Microsoft.EntityFrameworkCore;
+using CSharpFunctionalExtensions;
 
 namespace TgQueueTime.Application;
 
@@ -29,34 +30,41 @@ public class Commands
         _clientRepository = clientRepository;
     }
 
-    public async Task RegisterOrganizationCommand(long idOrganization, string organizationName)
+    public async Task<Result> RegisterOrganizationCommand(long idOrganization, string organizationName)
     {
         try
         {
-            var existingOrganization = await _organizationRepository.GetByConditionsAsync(o =>o.Id == idOrganization);
+            var existingOrganization = await _organizationRepository.GetByConditionsAsync(o => o.Id == idOrganization);
             if (existingOrganization != null)
-                throw new InvalidOperationException("Организация уже зарегистрирована на этом аккаунте");
+                return Result.Failure("Организация уже зарегистрирована на этом аккаунте");
+            //throw new InvalidOperationException("Организация уже зарегистрирована на этом аккаунте");
 
             var organization = new Organization(idOrganization, organizationName);
             await _organizationService.RegisterOrganizationAsync(organization);
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException("Ошибка при регистрации организации");
+            return Result.Failure("Произошла ошибка при регистрации организации. Попробуйте позже");
+            //throw new InvalidOperationException("Ошибка при регистрации организации");
         }
+
+        return Result.Success();
     }
 
-    public async Task AddClientToQueueCommand(long idClient, string serviceName, string organizationName)
+    public async Task<Result> AddClientToQueueCommand(long idClient, string serviceName, string organizationName)
     {
         var clients = await _clientRepository.GetByConditionsAsync(c => c.UserId == idClient);
         if (clients != null)
         {
-            throw new InvalidOperationException("Вы уже регистрировались ранее");
+            return Result.Failure("Вы уже регистрировались ранее");
+            //throw new InvalidOperationException("Вы уже регистрировались ранее");
         }
+
         var organizationEntity = await _organizationRepository.GetByConditionsAsync(o => o.Name == organizationName);
         if (organizationEntity == null)
         {
-            throw new InvalidOperationException($"Организация с именем {organizationName} не найдена.");
+            return Result.Failure($"Организация с именем {organizationName} не найдена.");
+            //throw new InvalidOperationException($"Организация с именем {organizationName} не найдена.");
         }
 
         var organization = organizationEntity.ToDomain(_serviceRepository);
@@ -64,65 +72,76 @@ public class Commands
             s => s.Name == serviceName && s.OrganizationId == organization.Id);
         if (serviceEntity == null)
         {
-            throw new InvalidOperationException(
-                $"Услуга '{serviceName}' не найдена в организации '{organizationEntity.Name}'.");
+            return Result.Failure($"Услуга '{serviceName}' не найдена в организации '{organizationEntity.Name}'.");
+            //throw new InvalidOperationException(
+            //$"Услуга '{serviceName}' не найдена в организации '{organizationEntity.Name}'.");
         }
-        
+
         var service = new Service(serviceEntity.Name, TimeSpan.Parse(serviceEntity.AverageTime));
         var client = new Client(idClient, service);
         await _queueService.AddClientToQueueAsync(client, organization);
+        return Result.Success();
     }
 
-    public async Task UpdateServiceAverageTimeCommand(long idOrganization, string serviceName, TimeSpan newAverageTime)
+    public async Task<Result> UpdateServiceAverageTimeCommand(long idOrganization, string serviceName,
+        TimeSpan newAverageTime)
     {
         var organizationEntity = await _organizationRepository.GetByKeyAsync(idOrganization);
         if (organizationEntity == null)
         {
-            throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");
+            return Result.Failure("Ваша организация не зарегистрирована");
+            //throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");
         }
 
         var organization = organizationEntity.ToDomain(_serviceRepository);
-        
+
         var serviceEntity = await _serviceRepository.GetByConditionsAsync(
             s => s.Name == serviceName && s.OrganizationId == organization.Id);
         if (serviceEntity == null)
         {
-            throw new InvalidOperationException(
-                $"Услуга '{serviceName}' не найдена в организации '{organizationEntity.Name}'.");
+            return Result.Failure($"Услуга '{serviceName}' не найдена в организации '{organizationEntity.Name}'.");
+            //throw new InvalidOperationException(
+            //$"Услуга '{serviceName}' не найдена в организации '{organizationEntity.Name}'.");
         }
-        
+
         var service = new Service(serviceEntity.Name, TimeSpan.Parse(serviceEntity.AverageTime));
-        
         await _organizationService.UpdateServiceAverageTimeCommandAsunc(organization, service, newAverageTime);
+        return Result.Success();
     }
 
-    public async Task AddService(long idOrganization, string serviceName, TimeSpan averageTime, List<int> windowNumbers)
+    public async Task<Result> AddService(long idOrganization, string serviceName, TimeSpan averageTime,
+        List<int> windowNumbers)
     {
         var organizationEntity = await _organizationRepository.GetByKeyAsync(idOrganization);
         if (organizationEntity == null)
         {
-            throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");
+            return Result.Failure("Ваша организация не зарегистрирована.");
+            //throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");
         }
+
         var organization = organizationEntity.ToDomain(_serviceRepository);
 
         var service = new Service(serviceName, averageTime);
-
 
         foreach (var windowNumber in windowNumbers)
         {
             await _organizationService.AddServiceAsync(organization, service, windowNumber);
         }
+
+        return Result.Success();
     }
 
-    public async Task MoveQueue(long idOrganization, int windowNumber)
+    public async Task<Result> MoveQueue(long idOrganization, int windowNumber)
     {
         var organizationEntity = await _organizationRepository.GetByKeyAsync(idOrganization);
         if (organizationEntity == null)
         {
-            throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");
+            return Result.Failure("Ваша организация не зарегистрирована");
+            //throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");
         }
 
         var organization = organizationEntity.ToDomain(_serviceRepository);
-        await _queueService.MoveQueue(organization, windowNumber);
+        var result = await _queueService.MoveQueue(organization, windowNumber);
+        return result;
     }
 }

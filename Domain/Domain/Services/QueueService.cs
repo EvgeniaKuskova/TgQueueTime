@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using CSharpFunctionalExtensions;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Services;
@@ -199,15 +200,16 @@ public class QueueService
         return totalWaitTime;
     }
 
-    public async Task MoveQueue(Organization organization, int windowNumber)
+    public async Task<Result> MoveQueue(Organization organization, int windowNumber)
     {
         var queueEntity = await _queueRepository.GetByConditionsAsync(
             q => q.OrganizationId == organization.Id && q.WindowNumber == windowNumber);
 
         if (queueEntity == null)
         {
-            throw new InvalidOperationException(
-                $"Очередь для окна {windowNumber} в организации с ID {organization.Id} не найдена.");
+            return Result.Failure($"Очередь для окна {windowNumber} в организации с именем {organization.Name} не найдена.");
+            //throw new InvalidOperationException(
+                //$"Очередь для окна {windowNumber} в организации с ID {organization.Id} не найдена.");
         }
 
         var clientsInQueue = await _clientRepository
@@ -223,6 +225,7 @@ public class QueueService
             var queueServiceEntity = await _queueServicesRepository.GetByKeyAsync(currentClient.QueueServiceId);
             if (queueServiceEntity == null)
             {
+                return Result.Failure($"Связь QueueService для клиента с ID {currentClient.Id} не найдена.");
                 throw new InvalidOperationException(
                     $"Связь QueueService для клиента с ID {currentClient.Id} не найдена.");
             }
@@ -230,7 +233,8 @@ public class QueueService
             var serviceEntity = await _serviceRepository.GetByKeyAsync(queueServiceEntity.ServiceId);
             if (serviceEntity == null)
             {
-                throw new InvalidOperationException($"Услуга с ID {queueServiceEntity.ServiceId} не найдена.");
+                return Result.Failure($"Данная услуга не найдена, попробуйте еще раз");
+                //throw new InvalidOperationException($"Услуга с ID {queueServiceEntity.ServiceId} не найдена.");
             }
 
             await _clientRepository.DeleteAsync(currentClient.Id);
@@ -241,12 +245,14 @@ public class QueueService
 
         if (nextClient == null)
         {
-            throw new InvalidOperationException(
-                $"В очереди для окна {windowNumber} нет клиентов, ожидающих обслуживания.");
+            return Result.Failure($"В очереди для окна {windowNumber} нет клиентов, ожидающих обслуживания.");
+            //throw new InvalidOperationException(
+                //$"В очереди для окна {windowNumber} нет клиентов, ожидающих обслуживания.");
         }
 
         nextClient.StartTime = DateTime.Now.ToString("o");
         await _clientRepository.UpdateAsync(nextClient);
+        return Result.Success();
     }
 
 

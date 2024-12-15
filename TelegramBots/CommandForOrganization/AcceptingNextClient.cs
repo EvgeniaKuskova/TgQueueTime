@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using CSharpFunctionalExtensions;
+using Domain;
 using Telegram.Bot;
 using TgQueueTime.Application;
 
@@ -6,12 +7,13 @@ namespace TelegramBots.Command;
 
 public class AcceptingNextClient: ICommand
 {
-    private readonly string _goodResponse = "Следующий клиент получил уведомление!";
+    private readonly string _goodResponse;
     private readonly Commands _commands;
 
     public AcceptingNextClient(Commands commands)
     {
         _commands = commands;
+        _goodResponse = "Следующий клиент получил уведомление!";
     }
 
     public async Task ExecuteAsync(ITelegramBotClient botClient, long chatId, Dictionary<long, UserState> userStates, 
@@ -24,17 +26,13 @@ public class AcceptingNextClient: ICommand
         }
         
         userStates[chatId] = UserState.Start;
-        try
+        var result = await _commands.MoveQueue(chatId, windowNumber);
+        if (result.IsFailure)
         {
-            await _commands.MoveQueue(chatId, windowNumber);
+            await botClient.SendTextMessageAsync(chatId, result.Error);
+            return;
         }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            if (e is InvalidOperationException)
-                await botClient.SendTextMessageAsync(chatId, e.Message);
-            throw;
-        }
+        
         await botClient.SendTextMessageAsync(chatId, _goodResponse);
     }
 

@@ -16,20 +16,13 @@ public class ClientBefore : ICommand
     public async Task ExecuteAsync(ITelegramBotClient botClient, long chatId, Dictionary<long, UserState> userStates,
         string messageText)
     {
-        try
+        var result = await _queries.GetNumberClientsBeforeQuery(chatId);
+        if (result.IsFailure)
         {
-            var task = _queries.GetNumberClientsBeforeQuery(chatId);
-            countClientsBefore = task.Result;
+            await botClient.SendTextMessageAsync(chatId, result.Error);
+            return;
         }
-
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            if (e is InvalidOperationException)
-                await botClient.SendTextMessageAsync(chatId, e.Message);
-            throw;
-        }
-
+        countClientsBefore = result.Value;
         await botClient.SendTextMessageAsync(chatId, $"Количество клиентов до вас {countClientsBefore}");
         userStates[chatId] = UserState.ClientStart;
     }

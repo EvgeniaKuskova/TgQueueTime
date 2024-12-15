@@ -18,7 +18,7 @@ public class OrganizationBot
         _commands = commands;
         _queries = queries;
         _botClient = new TelegramBotClient(token);
-        _updateHandler = new UpdateHandler(_botClient, _commands, _queries);
+        _updateHandler = new OrganizationUpdateHandler(_botClient, _commands, _queries);
     }
 
     public async Task Run()

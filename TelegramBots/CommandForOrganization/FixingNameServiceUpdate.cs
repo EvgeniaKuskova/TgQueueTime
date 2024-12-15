@@ -5,12 +5,12 @@ namespace TelegramBots.Command;
 public class FixingNameServiceUpdate: ICommand
 {
     private readonly Dictionary<long, string> _serviceAverageTimeUpdate;
-    private readonly string _response;
+    private readonly string _goodResponse;
     
     public FixingNameServiceUpdate(Dictionary<long, string> serviceAverageTimeUpdate)
     {
         _serviceAverageTimeUpdate = serviceAverageTimeUpdate;
-        _response = "Отлично! Теперь введите среднее время обслуживания клиента (в минутах). " +
+        _goodResponse = "Отлично! Теперь введите среднее время обслуживания клиента (в минутах). " +
                     "Например: 15 минут";
     }
 
@@ -18,7 +18,7 @@ public class FixingNameServiceUpdate: ICommand
         string messageText)
     {
         _serviceAverageTimeUpdate[chatId] = messageText;
-        await botClient.SendTextMessageAsync(chatId, _response);
+        await botClient.SendTextMessageAsync(chatId, _goodResponse);
         userStates[chatId] = UserState.WaitingForAverageTimeUpdate;
     }
 

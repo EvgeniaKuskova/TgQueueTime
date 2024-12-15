@@ -7,12 +7,19 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="CSharpFunctionalExtensions" Version="3.2.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.0"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Infrastructure\Database\Database.db">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

@@ -25,19 +25,14 @@ public class RegisterService: ICommand
             return;
         }
         var name = _serviceAverageTime[chatId].Keys.First();
+        var result = await _commands.AddService(chatId, name, _serviceAverageTime[chatId][name],
+            windows.Select(int.Parse).ToList());
+        if (result.IsFailure)
+        {
+            await botClient.SendTextMessageAsync(chatId, result.Error);
+            return;
+        }
         
-        try
-        {
-            await _commands.AddService(chatId, name, _serviceAverageTime[chatId][name],
-                windows.Select(int.Parse).ToList());
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            if (e is InvalidOperationException)
-                await botClient.SendTextMessageAsync(chatId, e.Message);
-            throw;
-        }
         await botClient.SendTextMessageAsync(chatId, _goodResponse);
         _serviceAverageTime.Remove(chatId);
         userStates[chatId] = UserState.Start;

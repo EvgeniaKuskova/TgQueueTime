@@ -51,26 +51,36 @@ public class ClientUpdateHandler : IUpdateHandler
 
     public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
-        if (update.Type == UpdateType.Message && update.Message!.Type == MessageType.Text)
+        var chatId = update.Message.Chat.Id;
+        try
         {
-            var chatId = update.Message.Chat.Id;
-            var messageText = update.Message.Text;
-
-            if (!_userStates.ContainsKey(chatId))
-                _userStates[chatId] = UserState.ClientStart;
-
-            var userState = _userStates[chatId];
-
-            if (_botResponses.TryGetValue(messageText, out var command))
-                await command.ExecuteAsync(_botClient, chatId, _userStates, messageText);
-            else if (userState == UserState.ClientStart)
-                await _botResponses["default"].ExecuteAsync(_botClient, chatId, _userStates, messageText);
-            else
+            if (update.Type == UpdateType.Message && update.Message!.Type == MessageType.Text)
             {
-                await _commandsBot
-                    .First(x => x.Accept(userState))
-                    .ExecuteAsync(_botClient, chatId, _userStates, messageText);
+                var messageText = update.Message.Text;
+
+                if (!_userStates.ContainsKey(chatId))
+                    _userStates[chatId] = UserState.ClientStart;
+
+                var userState = _userStates[chatId];
+
+                if (_botResponses.TryGetValue(messageText, out var command))
+                    await command.ExecuteAsync(_botClient, chatId, _userStates, messageText);
+                else if (userState == UserState.ClientStart)
+                    await _botResponses["default"].ExecuteAsync(_botClient, chatId, _userStates, messageText);
+                else
+                {
+                    await _commandsBot
+                        .First(x => x.Accept(userState))
+                        .ExecuteAsync(_botClient, chatId, _userStates, messageText);
+                }
             }
+        }
+        
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            await botClient.SendTextMessageAsync(chatId, 
+                "Извините, что-то пошло не так. Попробуйте позже.");
         }
     }
 }

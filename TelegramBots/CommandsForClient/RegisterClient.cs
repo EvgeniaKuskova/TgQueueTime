@@ -18,36 +18,28 @@ public class RegisterClient : ICommand
     public async Task ExecuteAsync(ITelegramBotClient botClient, long chatId, Dictionary<long, UserState> userStates,
         string messageText)
     {
-        try
+        var allOrganizations = await _queries.GetAllOrganizations();
+        var nameOrganizations = allOrganizations.Select(x => x.Name).ToArray();
+        if (Array.Exists(nameOrganizations, name => name == messageText))
+            _organization[chatId] = messageText;
+        else
         {
-            var taskGetAllOrganizations = _queries.GetAllOrganizations();
-            var allOrganizations = taskGetAllOrganizations.Result;
-            var nameOrganizations = allOrganizations.Select(x => x.Name).ToArray();
-            if (Array.Exists(nameOrganizations, name => name == messageText))
-                _organization[chatId] = messageText;
-            else
-            {
-                await botClient.SendTextMessageAsync(chatId, "Такой организации не существует, повторите ввод");
-                userStates[chatId] = UserState.WaitingClientForNameOrganization;
-                return;
-            }
-
-            var taskGetAllServices = _queries.GetAllServices(_organization[chatId]);
-            var allServices = taskGetAllServices.Result;
-            var nameServices = allServices.Select(x => x.Name).ToArray();
-            string servicesString = string.Join(" | ", nameServices);
-
-            await botClient.SendTextMessageAsync(chatId, $"Выбери услугу, где нужно занять очередь ( | это разделитель): {servicesString}");
+            await botClient.SendTextMessageAsync(chatId, "Такой организации не существует, повторите ввод");
+            userStates[chatId] = UserState.WaitingClientForNameOrganization;
+            return;
         }
 
-        catch (Exception e)
+        var taskGetAllServices = _queries.GetAllServices(_organization[chatId]);
+        var allServices = await _queries.GetAllServices(_organization[chatId]);
+        if (allServices.IsFailure)
         {
-            Console.WriteLine(e);
-            if (e is InvalidOperationException)
-                await botClient.SendTextMessageAsync(chatId, e.Message);
-            throw;
+            await botClient.SendTextMessageAsync(chatId, allServices.Error);
+            return;
         }
-
+        
+        var nameServices = allServices.Value.Select(x => x.Name).ToArray();
+        var servicesString = string.Join(" | ", nameServices);
+        await botClient.SendTextMessageAsync(chatId, $"Выбери услугу, где нужно занять очередь ( | это разделитель): {servicesString}");
         userStates[chatId] = UserState.WaitingClientForNameService;
     }
 

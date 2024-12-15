@@ -23,20 +23,14 @@ public class GettingAllClients: ICommand
         }
 
         userStates[chatId] = UserState.Start;
-        List<Client> clients;
-        try
+        var result = await _queries.GetAllClientsInQueueQuery(chatId, windowNumber);
+        if (result.IsFailure)
         {
-            var task = _queries.GetAllClientsInQueueQuery(chatId, windowNumber);
-            clients = task.Result;
+            await botClient.SendTextMessageAsync(chatId, result.Error);
+            return;
         }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            if (e is InvalidOperationException)
-                await botClient.SendTextMessageAsync(chatId, e.Message);
-            throw;
-        }
-        
+
+        var clients = result.Value;
         await botClient.SendTextMessageAsync(chatId, $"Список клиентов: {string.Join('\n', clients)}");
     }
 

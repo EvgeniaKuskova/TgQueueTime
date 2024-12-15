@@ -25,19 +25,13 @@ public class UpdatingAverageTime: ICommand
             return;
         }
         userStates[chatId] = UserState.Start;
-        try
+        var result = await _commands.UpdateServiceAverageTimeCommand(chatId, _serviceAverageTimeUpdate[chatId],
+            new TimeSpan(0, minutes, 0));
+        if (result.IsFailure)
         {
-            await _commands.UpdateServiceAverageTimeCommand(chatId, _serviceAverageTimeUpdate[chatId],
-                new TimeSpan(0, minutes, 0));
+            await botClient.SendTextMessageAsync(chatId, result.Error);
+            return;
         }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            if (e is InvalidOperationException)
-                await botClient.SendTextMessageAsync(chatId, e.Message);
-            throw;
-        }
-        
         await botClient.SendTextMessageAsync(chatId, _goodResponse);
         _serviceAverageTimeUpdate.Remove(chatId);
     }
