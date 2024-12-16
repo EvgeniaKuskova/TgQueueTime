@@ -34,7 +34,7 @@ public class TakeMyTime : ICommand
         var minutes = _myTime.Minutes;
         var resultTime = hours == 0 ? $"{_myTime.Minutes} минут" : $"{hours} часов {minutes} минут";
         await botClient.SendTextMessageAsync(chatId, $"Ваше время ожидания составляет {resultTime}");
-        userStates[chatId] = UserState.WaitingNotification;
+        userStates[chatId] = UserState.ClientStart;
     }
 
     public bool Accept(UserState userState)

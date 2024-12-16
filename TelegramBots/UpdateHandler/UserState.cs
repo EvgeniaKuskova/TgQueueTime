@@ -17,6 +17,5 @@ public enum UserState
     WaitingClientForNameService,
     WaitingClientForMyTime,
     WaitingClientForCountClientsBefore,
-    WaitingClientForNameOrganization,
-    WaitingNotification
+    WaitingClientForNameOrganization
 }

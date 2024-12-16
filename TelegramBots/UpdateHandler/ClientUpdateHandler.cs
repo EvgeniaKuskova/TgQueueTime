@@ -45,8 +45,7 @@ public class ClientUpdateHandler : IUpdateHandler
         _commandsBot = new ICommand[]
         {
             new RegisterClient(_organization, _queries),
-            new GetNameService(_organization, _commands, _queries),
-            new WaitingForNotification(_queries)
+            new GetNameService(_organization, _commands, _queries)
         };
     }
 
@@ -63,14 +62,50 @@ public class ClientUpdateHandler : IUpdateHandler
             var userState = _userStates[chatId];
 
             if (_botResponses.TryGetValue(messageText, out var command))
+            {
                 await command.ExecuteAsync(_botClient, chatId, _userStates, messageText);
+                try
+                {
+                    _ = Task.Run(() => CheckClientTimeAsync(botClient, chatId, cancellationToken));
+                }
+                catch{}
+            }
             else if (userState == UserState.ClientStart)
+            {
                 await _botResponses["default"].ExecuteAsync(_botClient, chatId, _userStates, messageText);
+            }
             else
             {
                 await _commandsBot
                     .First(x => x.Accept(userState))
                     .ExecuteAsync(_botClient, chatId, _userStates, messageText);
+                _ = Task.Run(() => CheckClientTimeAsync(botClient, chatId, cancellationToken));
+            }
+        }
+    }
+
+    private async Task CheckClientTimeAsync(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
+    {
+        while (true)
+        {
+            try
+            {
+                var _myTime = await _queries.GetClientTimeQuery(chatId);
+
+                var fiveMinutesMore = new TimeSpan(0, 5, 10);
+                var fiveMinutes = new TimeSpan(0, 5, 0);
+
+                if (_myTime < fiveMinutesMore && _myTime > fiveMinutes)
+                {
+                    await botClient.SendTextMessageAsync(chatId, $"Уведомление! " +
+                        $"\nВаше время ожидания составляет {_myTime.Minutes} минут");
+                    break;
+                }
+                await Task.Delay(1000, cancellationToken);
+            }
+            catch
+            {
+                break;
             }
         }
     }

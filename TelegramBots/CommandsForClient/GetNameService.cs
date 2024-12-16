@@ -50,7 +50,7 @@ public class GetNameService : ICommand
         await botClient.SendTextMessageAsync(chatId, 
             $"Ваше время ожидания составляет {resultTime}. Отслеживайте его по команде /mytime.\n " +
             $"Количество клиентов до вас можно посмотреть по команде /clientsbeforeme");
-        userStates[chatId] = UserState.WaitingNotification;
+        userStates[chatId] = UserState.ClientStart;
     }
 
     public bool Accept(UserState userState)
