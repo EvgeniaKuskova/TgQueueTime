@@ -79,14 +79,20 @@ public class Queries
         return await _organizationService.GetAllOrganizations();
     }
 
-    public async Task<bool> IsQueueStarted(long idOrganization, int windowNumber)
+    public async Task<bool> IsQueueStarted(string nameOrganization, long idClient)
     {
-        var organizationEntity = await _organizationRepository.GetByConditionsAsync(org => org.Id == idOrganization);
+        var organizationEntity = await _organizationRepository.GetByConditionsAsync(o => o.Name == nameOrganization);
         if (organizationEntity == null)
         {
-            throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");
+            throw new InvalidOperationException($"Организация с id {nameOrganization} не найдена.");
         }
         var organization = organizationEntity.ToDomain(_serviceRepository);
-        return await _queueService.IsQueueStarted(organization, windowNumber);
+        var clientEntity = await _clientRepository.GetByConditionsAsync(client => client.UserId == idClient);
+        if (clientEntity == null)
+        {
+            throw new InvalidOperationException($"Клиент с id {idClient} не стоит в очереди");
+        }
+
+        return await _queueService.IsQueueStarted(organization, clientEntity);
     }
 }

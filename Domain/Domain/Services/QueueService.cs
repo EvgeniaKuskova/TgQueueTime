@@ -310,17 +310,17 @@ public class QueueService
         return services;
     }
 
-    public async Task<bool> IsQueueStarted(Organization organization, int windowNumber)
+    public async Task<bool> IsQueueStarted(Organization organization, ClientsEntity clientsEntity)
     {
+        var queueServiceEntity =
+            await _queueServicesRepository.GetByConditionsAsync(q => q.Id == clientsEntity.QueueServiceId);
         var queue = await _queueRepository.GetByConditionsAsync(
-            q => q.OrganizationId == organization.Id && q.WindowNumber == windowNumber);
-
+            q => q.Id == queueServiceEntity.QueueId);
         if (queue is null)
         {
             throw new InvalidOperationException(
-                $"Очередь для окна {windowNumber} в организации с ID {organization.Id} не найдена.");
+                $"Очередь в организации с ID {organization.Id} не найдена.");
         }
-
         var clientsInQueue = await _clientRepository
             .GetAllByValueAsync(c => c.QueueId, queue.Id)
             .ToListAsync();
