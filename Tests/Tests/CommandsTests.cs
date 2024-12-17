@@ -274,9 +274,9 @@ public class CommandsTests
         var averageTime = TimeSpan.FromMinutes(15);
         var windowNumbers = new List<int> { 1, 2, 3 };
 
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            commands.AddService(nonExistentOrganizationId, serviceName, averageTime, windowNumbers));
+        var result = await commands.AddService(nonExistentOrganizationId, 
+            serviceName, averageTime, windowNumbers);
 
-        Assert.Equal($"Организация с id {nonExistentOrganizationId} не найдена.", exception.Message);
+        Assert.Equal("Ваша организация не зарегистрирована.", result.Error);
     }
 }
