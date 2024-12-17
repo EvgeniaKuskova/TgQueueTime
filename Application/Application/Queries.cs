@@ -36,7 +36,6 @@ public class Queries
         if (clientEntity == null)
         {
             return Result.Failure<TimeSpan>($"Клиент с id {idClient} не стоит в очереди");
-            //throw new InvalidOperationException($"Клиент с id {idClient} не стоит в очереди");
         }
 
         var timeQueryResult =  await _queueService.GetClientTimeQuery(clientEntity);
@@ -49,7 +48,6 @@ public class Queries
         if (clientEntity == null)
         {
             return Result.Failure<int>($"Клиент с id {idClient} не стоит в очереди");
-            //throw new InvalidOperationException($"Клиент с id {idClient} не стоит в очереди");
         }
         var clients = await _queueService.GetNumberClientsBeforeQuery(clientEntity);
         return Result.Success(clients);
@@ -61,7 +59,6 @@ public class Queries
         if (organizationEntity == null)
         {
             return Result.Failure<List<Client>>($"Организация с id {idOrganization} не найдена.");
-            //throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");
         }
         var organization = organizationEntity.ToDomain(_serviceRepository);
         var clients = await _queueService.GetAllClientsInQueueQuery(organization, windowNumber);
@@ -74,7 +71,6 @@ public class Queries
         if (organizationEntity == null)
         {
             return Result.Failure<List<Service>>("Организация с именем {nameOrganization} не найдена.");
-            //throw new InvalidOperationException($"Организация с id {nameOrganization} не найдена.");
         }
         var organization = organizationEntity.ToDomain(_serviceRepository);
         var services = await _queueService.GetAllServices(organization);

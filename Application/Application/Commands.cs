@@ -37,15 +37,12 @@ public class Commands
             var existingOrganization = await _organizationRepository.GetByConditionsAsync(o => o.Id == idOrganization);
             if (existingOrganization != null)
                 return Result.Failure("Организация уже зарегистрирована на этом аккаунте");
-            //throw new InvalidOperationException("Организация уже зарегистрирована на этом аккаунте");
-
             var organization = new Organization(idOrganization, organizationName);
             await _organizationService.RegisterOrganizationAsync(organization);
         }
         catch (Exception ex)
         {
             return Result.Failure("Произошла ошибка при регистрации организации. Попробуйте позже");
-            //throw new InvalidOperationException("Ошибка при регистрации организации");
         }
 
         return Result.Success();
@@ -57,14 +54,12 @@ public class Commands
         if (clients != null)
         {
             return Result.Failure("Вы уже регистрировались ранее");
-            //throw new InvalidOperationException("Вы уже регистрировались ранее");
         }
 
         var organizationEntity = await _organizationRepository.GetByConditionsAsync(o => o.Name == organizationName);
         if (organizationEntity == null)
         {
             return Result.Failure($"Организация с именем {organizationName} не найдена.");
-            //throw new InvalidOperationException($"Организация с именем {organizationName} не найдена.");
         }
 
         var organization = organizationEntity.ToDomain(_serviceRepository);
@@ -73,8 +68,6 @@ public class Commands
         if (serviceEntity == null)
         {
             return Result.Failure($"Услуга '{serviceName}' не найдена в организации '{organizationEntity.Name}'.");
-            //throw new InvalidOperationException(
-            //$"Услуга '{serviceName}' не найдена в организации '{organizationEntity.Name}'.");
         }
 
         var service = new Service(serviceEntity.Name, TimeSpan.Parse(serviceEntity.AverageTime));
@@ -90,7 +83,6 @@ public class Commands
         if (organizationEntity == null)
         {
             return Result.Failure("Ваша организация не зарегистрирована");
-            //throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");
         }
 
         var organization = organizationEntity.ToDomain(_serviceRepository);
@@ -100,8 +92,6 @@ public class Commands
         if (serviceEntity == null)
         {
             return Result.Failure($"Услуга '{serviceName}' не найдена в организации '{organizationEntity.Name}'.");
-            //throw new InvalidOperationException(
-            //$"Услуга '{serviceName}' не найдена в организации '{organizationEntity.Name}'.");
         }
 
         var service = new Service(serviceEntity.Name, TimeSpan.Parse(serviceEntity.AverageTime));
@@ -116,7 +106,6 @@ public class Commands
         if (organizationEntity == null)
         {
             return Result.Failure("Ваша организация не зарегистрирована.");
-            //throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");
         }
 
         var organization = organizationEntity.ToDomain(_serviceRepository);
@@ -137,7 +126,6 @@ public class Commands
         if (organizationEntity == null)
         {
             return Result.Failure("Ваша организация не зарегистрирована");
-            //throw new InvalidOperationException($"Организация с id {idOrganization} не найдена.");
         }
 
         var organization = organizationEntity.ToDomain(_serviceRepository);
