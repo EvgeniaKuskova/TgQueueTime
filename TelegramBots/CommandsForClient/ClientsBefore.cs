@@ -19,7 +19,7 @@ public class ClientBefore : ICommand
         try
         {
             var task = _queries.GetNumberClientsBeforeQuery(chatId);
-            countClientsBefore = task.Result;
+            countClientsBefore = await task;
         }
 
         catch (Exception e)

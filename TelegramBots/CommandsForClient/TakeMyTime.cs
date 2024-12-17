@@ -19,7 +19,7 @@ public class TakeMyTime : ICommand
         try
         {
             var task = _queries.GetClientTimeQuery(chatId);
-            _myTime = task.Result;
+            _myTime = await task;
         }
 
         catch (Exception e)

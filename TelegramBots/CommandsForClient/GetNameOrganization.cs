@@ -20,7 +20,7 @@ public class GetNameOrganization : ICommand
         try
         {
             var task = _queries.GetAllOrganizations();
-            _allOrganizations = task.Result;
+            _allOrganizations = await task;
         }
 
         catch (Exception e)

@@ -21,7 +21,7 @@ public class RegisterClient : ICommand
         try
         {
             var taskGetAllOrganizations = _queries.GetAllOrganizations();
-            var allOrganizations = taskGetAllOrganizations.Result;
+            var allOrganizations = await taskGetAllOrganizations;
             var nameOrganizations = allOrganizations.Select(x => x.Name).ToArray();
             if (Array.Exists(nameOrganizations, name => name == messageText))
                 _organization[chatId] = messageText;
@@ -33,7 +33,7 @@ public class RegisterClient : ICommand
             }
 
             var taskGetAllServices = _queries.GetAllServices(_organization[chatId]);
-            var allServices = taskGetAllServices.Result;
+            var allServices = await taskGetAllServices;
             var nameServices = allServices.Select(x => x.Name).ToArray();
             string servicesString = string.Join(" | ", nameServices);
 

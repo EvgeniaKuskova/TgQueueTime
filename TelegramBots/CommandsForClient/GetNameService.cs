@@ -27,7 +27,7 @@ public class GetNameService : ICommand
         try
         {
             var task = _queries.GetAllServices(_organization[chatId]);
-            var allServices = task.Result;
+            var allServices = await task;
             var nameServices = allServices.Select(x => x.Name).ToArray();
             if (!Array.Exists(nameServices, name => name == messageText))
             {
@@ -36,7 +36,7 @@ public class GetNameService : ICommand
                 return;
             }
             await _commands.AddClientToQueueCommand(chatId, nameService, _organization[chatId]);
-            queueIsStarted = await _queries.IsQueueStarted(_organization[chatId], );
+            queueIsStarted = await _queries.IsQueueStarted(_organization[chatId], chatId);
             _myTime = await _queries.GetClientTimeQuery(chatId);
         }
 
@@ -47,16 +47,24 @@ public class GetNameService : ICommand
                 await botClient.SendTextMessageAsync(chatId, e.Message);
             throw;
         }
-
-        var resultTime = _myTime.Hours == 0 ? $"{_myTime.Minutes} минут" : $"{_myTime.Hours} часов {_myTime.Minutes} минут";
-        await botClient.SendTextMessageAsync(chatId, 
-            $"Вы зарегистрированы \nВаше время ожидания составляет {resultTime}. Отслеживайте его по команде /mytime.\n " +
-            $"Количество клиентов до вас можно посмотреть по команде /clientsbeforeme");
-
-        _ = Task.Run(() => CheckClientTimeAsync(botClient, chatId, cancellationToken, queueIsStarted));
-        userStates[chatId] = UserState.ClientStart;
-
+        if (queueIsStarted)
+        {
+            var resultTime = _myTime.Hours == 0 ? $"{_myTime.Minutes} минут" : $"{_myTime.Hours} часов {_myTime.Minutes} минут";
+            await botClient.SendTextMessageAsync(chatId,
+                $"Вы зарегистрированы \nВаше время ожидания составляет {resultTime}. Отслеживайте его по команде /mytime.\n " +
+                $"Количество клиентов до вас можно посмотреть по команде /clientsbeforeme");
+        }
+        else
+        {
+            await botClient.SendTextMessageAsync(chatId,
+                $"Вы зарегистрированы \nНо очередь еще не запущена. Ваше время /mytime пока отображается как 0 минут, после открытия оно изменится." +
+                $" Отслеживайте его по команде /mytime.\n " +
+                $"Количество клиентов до вас можно посмотреть по команде /clientsbeforeme");
+        }
         
+
+        _ = Task.Run(() => CheckClientTimeAsync(botClient, chatId, cancellationToken));
+        userStates[chatId] = UserState.ClientStart;
     }
 
     public bool Accept(UserState userState)
@@ -64,58 +72,71 @@ public class GetNameService : ICommand
         return userState == UserState.WaitingClientForNameService;
     }
 
-    private async Task CheckClientTimeAsync(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken, bool queueStarted)
+    private async Task CheckClientTimeAsync(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
+    {
+        await CheckTimeAndNotifyAsync(botClient, chatId, cancellationToken, async (myTime) =>
+        {
+            await botClient.SendTextMessageAsync(chatId, $"Уведомление! " +
+                $"\nОчередь открыта. Ваше время ожидания составляет {myTime.Minutes} минут");
+            return true;
+        });
+
+        await CheckTimeAndNotifyAsync(botClient, chatId, cancellationToken, async (myTime) =>
+        {
+            if (myTime.Minutes <= 4)
+                return true;
+
+            var fiveMinutesMore = new TimeSpan(0, 5, 10);
+            var fiveMinutes = new TimeSpan(0, 5, 0);
+
+            if (myTime <= fiveMinutesMore && myTime >= fiveMinutes)
+            {
+                await botClient.SendTextMessageAsync(chatId, $"Уведомление! " +
+                    $"\nВаше время ожидания составляет {myTime.Minutes} минут");
+                return true;
+            }
+
+            return false;
+        });
+
+        await CheckTimeAndNotifyAsync(botClient, chatId, cancellationToken, async (myTime) =>
+        {
+            var nullfiveMinutesMore = new TimeSpan(0, 0, 10);
+            var nullMinutes = new TimeSpan(0, 0, 0);
+            if (myTime <= nullfiveMinutesMore && myTime >= nullMinutes)
+            {
+                await botClient.SendTextMessageAsync(chatId, $"Уведомление! " +
+                    $"\nВаша очередь подошла");
+                return true;
+            }
+
+            return false;
+        });
+    }
+
+    private async Task CheckTimeAndNotifyAsync(
+        ITelegramBotClient botClient,
+        long chatId,
+        CancellationToken cancellationToken,
+        Func<TimeSpan, Task<bool>> notificationAction)
     {
         while (true)
         {
-            if (queueStarted)
+            var queueIsStarted = await _queries.IsQueueStarted(_organization[chatId], chatId);
+            if (queueIsStarted)
             {
                 try
                 {
-                    var _myTime = await _queries.GetClientTimeQuery(chatId);
-                    if (_myTime.Minutes <= 4)
+                    var myTime = await _queries.GetClientTimeQuery(chatId);
+                    if (await notificationAction(myTime))
                         break;
-
-                    var fiveMinutesMore = new TimeSpan(0, 5, 10);
-                    var fiveMinutes = new TimeSpan(0, 5, 0);
-
-                    if (_myTime <= fiveMinutesMore && _myTime > fiveMinutes)
-                    {
-                        await botClient.SendTextMessageAsync(chatId, $"Уведомление! " +
-                            $"\nВаше время ожидания составляет {_myTime.Minutes} минут");
-                        break;
-                    }
-                    await Task.Delay(1000, cancellationToken);
                 }
                 catch
                 {
                     break;
                 }
             }
-        }
-        while (true)
-        {
-            if (queueStarted)
-            {
-                try
-                {
-                    var _myTime = await _queries.GetClientTimeQuery(chatId);
-
-                    var nullfiveMinutesMore = new TimeSpan(0, 0, 10);
-                    var nullMinutes = new TimeSpan(0, 0, 0);
-                    if (_myTime <= nullfiveMinutesMore && _myTime >= nullMinutes)
-                    {
-                        await botClient.SendTextMessageAsync(chatId, $"Уведомление! " +
-                            $"\nВаше время ожидания составляет {_myTime.Minutes} минут");
-                        break;
-                    }
-                    await Task.Delay(1000, cancellationToken);
-                }
-                catch
-                {
-                    break;
-                }
-            }
+            await Task.Delay(1000, cancellationToken);
         }
     }
 }

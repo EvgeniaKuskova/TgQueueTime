@@ -27,7 +27,7 @@ public class GettingAllClients: ICommand
         try
         {
             var task = _queries.GetAllClientsInQueueQuery(chatId, windowNumber);
-            clients = task.Result;
+            clients = await task;
         }
         catch (Exception e)
         {
