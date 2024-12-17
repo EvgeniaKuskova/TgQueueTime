@@ -9,104 +9,93 @@ namespace TgQueueTime.Application;
 
 public class CommandsTests
 {
-    private ApplicationDbContext GetInMemoryDbContext()
+    private readonly ApplicationDbContext _dbContext;
+    private readonly IRepository<OrganizationEntity> _organizationRepository;
+    private readonly IRepository<ServiceEntity?> _serviceRepository;
+    private readonly IRepository<QueueEntity> _queueRepository;
+    private readonly IRepository<QueueServicesEntity> _queueServicesRepository;
+    private readonly IRepository<ClientsEntity> _clientRepository;
+
+    private readonly OrganizationService _organizationService;
+    private readonly QueueService _queueService;
+    private readonly Commands _commands;
+
+    public CommandsTests()
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
-        return new ApplicationDbContext(options);
+        _dbContext = new ApplicationDbContext(options);
+
+        _organizationRepository = new Repository<OrganizationEntity>(_dbContext);
+        _serviceRepository = new Repository<ServiceEntity?>(_dbContext);
+        _queueRepository = new Repository<QueueEntity>(_dbContext);
+        _queueServicesRepository = new Repository<QueueServicesEntity>(_dbContext);
+        _clientRepository = new Repository<ClientsEntity>(_dbContext);
+
+        _organizationService = new OrganizationService(
+            _queueRepository, _queueServicesRepository, _clientRepository, _organizationRepository, _serviceRepository);
+
+        _queueService = new QueueService(
+            _queueRepository, _queueServicesRepository, _clientRepository, _organizationRepository, _serviceRepository);
+
+        _commands = new Commands(
+            _organizationService, _queueService, _organizationRepository, _serviceRepository, _queueRepository,
+            _clientRepository);
     }
+
 
     [Fact]
     public async Task AddClientToQueueCommand_Should_Add_Client_To_Queue()
     {
-        var dbContext = GetInMemoryDbContext();
-
-        // Репозитории
-        var organizationRepository = new Repository<OrganizationEntity>(dbContext);
-        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
-        var queueRepository = new Repository<QueueEntity>(dbContext);
-        var clientRepository = new Repository<ClientsEntity>(dbContext);
-        var queueServiceRepository = new Repository<QueueServicesEntity>(dbContext);
-
-        // Сервисы
-        var queueService = new QueueService(
-            queueRepository,
-            queueServiceRepository,
-            clientRepository,
-            organizationRepository,
-            serviceRepository);
-
-        var organizationService = new OrganizationService(
-            queueRepository,
-            queueServiceRepository,
-            clientRepository,
-            organizationRepository,
-            serviceRepository);
-
-        // Команды
-        var commands = new Commands(
-            organizationService,
-            queueService,
-            organizationRepository,
-            serviceRepository,
-            queueRepository,
-            clientRepository);
-
-        // Создаем организацию
         var organization = new OrganizationEntity
         {
             Name = "Test Organization"
         };
-        await organizationRepository.AddAsync(organization);
+        await _organizationRepository.AddAsync(organization);
 
-        // Создаем услугу
         var service = new ServiceEntity
         {
             Name = "Test Service",
             AverageTime = "00:30:00",
             OrganizationId = organization.Id
         };
-        await serviceRepository.AddAsync(service);
+        await _serviceRepository.AddAsync(service);
 
-        // Создаем очередь
         var queue = new QueueEntity
         {
             OrganizationId = organization.Id,
             WindowNumber = 1
         };
-        await queueRepository.AddAsync(queue);
+        await _queueRepository.AddAsync(queue);
 
-        // Связываем очередь и услугу
         var queueServiceEntity = new QueueServicesEntity
         {
             QueueId = queue.Id,
             ServiceId = service.Id
         };
-        await queueServiceRepository.AddAsync(queueServiceEntity);
+        await _queueServicesRepository.AddAsync(queueServiceEntity);
 
-        // Act
-        await commands.AddClientToQueueCommand(123, "Test Service", organization.Name);
+        await _commands.AddClientToQueueCommand(123, "Test Service", organization.Name);
 
-        // Assert
-        var clientsInQueue = await clientRepository
+        var clientsInQueue = await _clientRepository
             .GetAllByValueAsync(c => c.QueueId, queue.Id)
             .ToListAsync();
 
         Assert.Single(clientsInQueue);
         var client = clientsInQueue.First();
 
-        var organizationInDb = await organizationRepository.GetByKeyAsync(organization.Id);
+        var organizationInDb = await _organizationRepository.GetByKeyAsync(organization.Id);
         Assert.NotNull(organizationInDb);
 
-        var serviceInDb = await serviceRepository.GetByConditionsAsync(
+        var serviceInDb = await _serviceRepository.GetByConditionsAsync(
             s => s.Name == service.Name && s.OrganizationId == organization.Id);
         Assert.NotNull(serviceInDb);
 
-        var queueInDb = await queueRepository.GetAllByValueAsync(q => q.OrganizationId, organization.Id).ToListAsync();
+        var queueInDb = await _queueRepository.GetAllByValueAsync(q => q.OrganizationId, organization.Id).ToListAsync();
         Assert.NotEmpty(queueInDb);
 
-        var queueServiceInDb = await queueServiceRepository
+        var queueServiceInDb = await _queueServicesRepository
             .GetAllByCondition(qs => qs.QueueId == queue.Id && qs.ServiceId == service.Id)
             .ToListAsync();
         Assert.NotEmpty(queueServiceInDb);
@@ -119,29 +108,11 @@ public class CommandsTests
     [Fact]
     public async Task UpdateServiceAverageTimeCommand_Should_Update_AverageTime()
     {
-        var dbContext = GetInMemoryDbContext();
-
-        var organizationRepository = new Repository<OrganizationEntity>(dbContext);
-        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
-        var queueRepository = new Repository<QueueEntity>(dbContext);
-        var clientRepository = new Repository<ClientsEntity>(dbContext);
-        var queueServiceRepository = new Repository<QueueServicesEntity>(dbContext);
-
-        var organizationService = new OrganizationService(
-            queueRepository,
-            queueServiceRepository,
-            clientRepository,
-            organizationRepository,
-            serviceRepository);
-
-        var commands = new Commands(organizationService, null, organizationRepository, serviceRepository,
-            queueRepository, clientRepository);
-
         var organization = new OrganizationEntity
         {
             Name = "Test Organization"
         };
-        await organizationRepository.AddAsync(organization);
+        await _organizationRepository.AddAsync(organization);
 
         var service = new ServiceEntity
         {
@@ -149,13 +120,13 @@ public class CommandsTests
             AverageTime = "00:30:00",
             OrganizationId = organization.Id
         };
-        await serviceRepository.AddAsync(service);
+        await _serviceRepository.AddAsync(service);
 
         var newAverageTime = TimeSpan.FromMinutes(45);
 
-        await commands.UpdateServiceAverageTimeCommand(organization.Id, service.Name, newAverageTime);
+        await _commands.UpdateServiceAverageTimeCommand(organization.Id, service.Name, newAverageTime);
 
-        var updatedService = await serviceRepository.GetByConditionsAsync(
+        var updatedService = await _serviceRepository.GetByConditionsAsync(
             s => s.Name == service.Name && s.OrganizationId == organization.Id);
 
         Assert.NotNull(updatedService);
@@ -165,42 +136,12 @@ public class CommandsTests
     [Fact]
     public async Task AddService_Should_Add_Service_And_Link_To_Windows()
     {
-        var dbContext = GetInMemoryDbContext();
-
-        var organizationRepository = new Repository<OrganizationEntity>(dbContext);
-        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
-        var queueRepository = new Repository<QueueEntity>(dbContext);
-        var queueServicesRepository = new Repository<QueueServicesEntity>(dbContext);
-        var clientRepository = new Repository<ClientsEntity>(dbContext);
-
-        var organizationService = new OrganizationService(
-            queueRepository,
-            queueServicesRepository,
-            clientRepository,
-            organizationRepository,
-            serviceRepository);
-
-        var queueService = new QueueService(
-            queueRepository,
-            queueServicesRepository,
-            clientRepository,
-            organizationRepository,
-            serviceRepository);
-
-        var commands = new Commands(
-            organizationService,
-            queueService,
-            organizationRepository,
-            serviceRepository,
-            queueRepository,
-            clientRepository);
-
         var organization = new OrganizationEntity
         {
             Id = 1,
             Name = "Test Organization"
         };
-        await organizationRepository.AddAsync(organization);
+        await _organizationRepository.AddAsync(organization);
 
         var windowNumbers = new List<int> { 1, 2, 3 };
 
@@ -211,24 +152,24 @@ public class CommandsTests
                 OrganizationId = organization.Id,
                 WindowNumber = windowNumber
             };
-            await queueRepository.AddAsync(queueEntity);
+            await _queueRepository.AddAsync(queueEntity);
         }
 
-        await dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync();
 
         var serviceName = "Test Service";
         var averageTime = TimeSpan.FromMinutes(15);
 
-        await commands.AddService(organization.Id, serviceName, averageTime, windowNumbers);
+        await _commands.AddService(organization.Id, serviceName, averageTime, windowNumbers);
 
-        var addedService = await serviceRepository
+        var addedService = await _serviceRepository
             .GetByConditionsAsync(s => s.OrganizationId == organization.Id && s.Name == serviceName);
 
         Assert.NotNull(addedService);
 
         foreach (var windowNumber in windowNumbers)
         {
-            var queueEntity = await queueRepository
+            var queueEntity = await _queueRepository
                 .GetByConditionsAsync(q => q.OrganizationId == organization.Id && q.WindowNumber == windowNumber);
 
             Assert.NotNull(queueEntity);
@@ -239,44 +180,47 @@ public class CommandsTests
     [Fact]
     public async Task AddService_Should_Throw_Exception_When_Organization_Not_Found()
     {
-        var dbContext = GetInMemoryDbContext();
-
-        var organizationRepository = new Repository<OrganizationEntity>(dbContext);
-        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
-        var queueRepository = new Repository<QueueEntity>(dbContext);
-        var queueServicesRepository = new Repository<QueueServicesEntity>(dbContext);
-        var clientRepository = new Repository<ClientsEntity>(dbContext);
-
-        var organizationService = new OrganizationService(
-            queueRepository,
-            queueServicesRepository,
-            clientRepository,
-            organizationRepository,
-            serviceRepository);
-
-        var queueService = new QueueService(
-            queueRepository,
-            queueServicesRepository,
-            clientRepository,
-            organizationRepository,
-            serviceRepository);
-
-        var commands = new Commands(
-            organizationService,
-            queueService,
-            organizationRepository,
-            serviceRepository,
-            queueRepository,
-            clientRepository);
-
         var nonExistentOrganizationId = 999;
         var serviceName = "Test Service";
         var averageTime = TimeSpan.FromMinutes(15);
         var windowNumbers = new List<int> { 1, 2, 3 };
 
-        var result = await commands.AddService(nonExistentOrganizationId, 
+        var result = await _commands.AddService(nonExistentOrganizationId,
             serviceName, averageTime, windowNumbers);
 
         Assert.Equal("Ваша организация не зарегистрирована.", result.Error);
+    }
+
+    [Fact]
+    public async Task RegisterOrganizationCommand_Should_Register_New_Organization()
+    {
+        var organizationId = 1L;
+        var organizationName = "New Organization";
+
+        var result = await _commands.RegisterOrganizationCommand(organizationId, organizationName);
+
+        Assert.True(result.IsSuccess);
+
+        var organizationInDb = await _organizationRepository.GetByKeyAsync(organizationId);
+        Assert.NotNull(organizationInDb);
+        Assert.Equal(organizationName, organizationInDb.Name);
+    }
+
+    [Fact]
+    public async Task RegisterOrganizationCommand_Should_Return_Failure_When_Organization_Already_Exists()
+    {
+        var organization = new OrganizationEntity
+        {
+            Id = 1L,
+            Name = "Existing Organization"
+        };
+
+        await _organizationRepository.AddAsync(organization);
+        await _dbContext.SaveChangesAsync();
+
+        var result = await _commands.RegisterOrganizationCommand(organization.Id, organization.Name);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("Организация уже зарегистрирована на этом аккаунте", result.Error);
     }
 }

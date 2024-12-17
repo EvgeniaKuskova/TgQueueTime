@@ -9,20 +9,39 @@ namespace Domain.Services;
 
 public class QueueServiceTest
 {
-    private ApplicationDbContext GetDbContext()
+    private readonly ApplicationDbContext _context;
+    private readonly IRepository<QueueEntity> _queueRepository;
+    private readonly IRepository<QueueServicesEntity> _queueServicesRepository;
+    private readonly IRepository<ClientsEntity> _clientRepository;
+    private readonly IRepository<OrganizationEntity> _organizationRepository;
+    private readonly IRepository<ServiceEntity?> _serviceRepository;
+    private readonly QueueService _queueService;
+
+    public QueueServiceTest()
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .UseInMemoryDatabase(Guid.NewGuid().ToString()) // Каждый тест работает с чистой БД
             .Options;
 
-        return new ApplicationDbContext(options);
+        _context = new ApplicationDbContext(options);
+
+        _queueRepository = new Repository<QueueEntity>(_context);
+        _queueServicesRepository = new Repository<QueueServicesEntity>(_context);
+        _clientRepository = new Repository<ClientsEntity>(_context);
+        _organizationRepository = new Repository<OrganizationEntity>(_context);
+        _serviceRepository = new Repository<ServiceEntity?>(_context);
+
+        _queueService = new QueueService(
+            _queueRepository,
+            _queueServicesRepository,
+            _clientRepository,
+            _organizationRepository,
+            _serviceRepository);
     }
 
     [Fact]
     public async Task AddDataToDatabase_Should_SaveDataCorrectly()
     {
-        var context = GetDbContext();
-
         var organization = new OrganizationEntity
         {
             Name = "Test Organization"
@@ -39,16 +58,16 @@ public class QueueServiceTest
             WindowNumber = 1
         };
 
-        await context.Organizations.AddAsync(organization);
-        await context.SaveChangesAsync();
+        await _context.Organizations.AddAsync(organization);
+        await _context.SaveChangesAsync();
 
         service.OrganizationId = organization.Id;
-        await context.Services.AddAsync(service);
-        await context.SaveChangesAsync();
+        await _context.Services.AddAsync(service);
+        await _context.SaveChangesAsync();
 
         queue.OrganizationId = organization.Id;
-        await context.Queues.AddAsync(queue);
-        await context.SaveChangesAsync();
+        await _context.Queues.AddAsync(queue);
+        await _context.SaveChangesAsync();
 
         var queueService = new QueueServicesEntity
         {
@@ -56,8 +75,8 @@ public class QueueServiceTest
             ServiceId = service.Id
         };
 
-        await context.QueueServices.AddAsync(queueService);
-        await context.SaveChangesAsync();
+        await _context.QueueServices.AddAsync(queueService);
+        await _context.SaveChangesAsync();
 
         var client = new ClientsEntity
         {
@@ -68,29 +87,27 @@ public class QueueServiceTest
             QueueServiceId = queueService.Id
         };
 
-        await context.Clients.AddAsync(client);
-        await context.SaveChangesAsync();
+        await _context.Clients.AddAsync(client);
+        await _context.SaveChangesAsync();
 
-        var organizationInDb = await context.Organizations
+        var organizationInDb = await _context.Organizations
             .FirstOrDefaultAsync(o => o.Name == organization.Name && o.Id == organization.Id);
-        var serviceInDb = await context.Services
+        var serviceInDb = await _context.Services
             .FirstOrDefaultAsync(s => s.Name == service.Name && s.OrganizationId == organization.Id);
-        var queueInDb = await context.Queues
+        var queueInDb = await _context.Queues
             .FirstOrDefaultAsync(q => q.WindowNumber == queue.WindowNumber && q.OrganizationId == organization.Id);
     }
 
     [Fact]
     public async Task AddClientToQueueAsync_Should_Add_Client_To_Optimal_Queue()
     {
-        var context = GetDbContext();
-
         var organization = new OrganizationEntity
         {
             Name = "Test Organization"
         };
 
-        await context.Organizations.AddAsync(organization);
-        await context.SaveChangesAsync();
+        await _context.Organizations.AddAsync(organization);
+        await _context.SaveChangesAsync();
 
         var service1 = new ServiceEntity
         {
@@ -106,8 +123,8 @@ public class QueueServiceTest
             OrganizationId = organization.Id
         };
 
-        await context.Services.AddRangeAsync(service1, service2);
-        await context.SaveChangesAsync();
+        await _context.Services.AddRangeAsync(service1, service2);
+        await _context.SaveChangesAsync();
 
         var queue1 = new QueueEntity
         {
@@ -121,8 +138,8 @@ public class QueueServiceTest
             WindowNumber = 2
         };
 
-        await context.Queues.AddRangeAsync(queue1, queue2);
-        await context.SaveChangesAsync();
+        await _context.Queues.AddRangeAsync(queue1, queue2);
+        await _context.SaveChangesAsync();
 
         var queueService1 = new QueueServicesEntity
         {
@@ -136,140 +153,40 @@ public class QueueServiceTest
             ServiceId = service2.Id
         };
 
-        await context.QueueServices.AddRangeAsync(queueService1, queueService2);
-        await context.SaveChangesAsync();
+        await _context.QueueServices.AddRangeAsync(queueService1, queueService2);
+        await _context.SaveChangesAsync();
 
         var client = new Client(123, new Service("Test Service 1", TimeSpan.FromMinutes(30)));
 
-        var servicesProvided = await context.Services
+        var servicesProvided = await _context.Services
             .Where(s => s.OrganizationId == organization.Id)
             .Select(s => new Service(s.Name, TimeSpan.Parse(s.AverageTime)))
             .ToListAsync();
 
         var queueService = new QueueService(
-            new Repository<QueueEntity>(context),
-            new Repository<QueueServicesEntity>(context),
-            new Repository<ClientsEntity>(context),
-            new Repository<OrganizationEntity>(context),
-            new Repository<ServiceEntity?>(context));
+            new Repository<QueueEntity>(_context),
+            new Repository<QueueServicesEntity>(_context),
+            new Repository<ClientsEntity>(_context),
+            new Repository<OrganizationEntity>(_context),
+            new Repository<ServiceEntity?>(_context));
 
         await queueService.AddClientToQueueAsync(client,
             new Organization(organization.Id, "Test Organization", servicesProvided));
 
-        var clientsInQueue1 = await context.Clients.Where(c => c.QueueId == queue1.Id).ToListAsync();
-        var clientsInQueue2 = await context.Clients.Where(c => c.QueueId == queue2.Id).ToListAsync();
+        var clientsInQueue1 = await _context.Clients.Where(c => c.QueueId == queue1.Id).ToListAsync();
+        var clientsInQueue2 = await _context.Clients.Where(c => c.QueueId == queue2.Id).ToListAsync();
 
         Assert.NotEmpty(clientsInQueue1); // Клиент добавлен в первую очередь
         Assert.Empty(clientsInQueue2); // Вторая очередь пуста
     }
 
-    /*[Fact]
-    public async Task GetClientTimeQuery_Should_Calculate_Correct_Wait_Time()
-    {
-        var dbContext = GetDbContext();
-        var queueServiceRepository = new Repository<QueueServicesEntity>(dbContext);
-        var clientRepository = new Repository<ClientsEntity>(dbContext);
-        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
-        var queueRepository = new Repository<QueueEntity>(dbContext);
-        var organizationRepository = new Repository<OrganizationEntity>(dbContext);
-
-        var now = DateTime.UtcNow;
-
-        var queueEntity = new QueueEntity { OrganizationId = 1, WindowNumber = 1 };
-        await queueRepository.AddAsync(queueEntity);
-
-        var serviceEntity = new ServiceEntity
-        {
-            Name = "Test Service",
-            AverageTime = "00:05:00",
-            OrganizationId = 1
-        };
-        await serviceRepository.AddAsync(serviceEntity);
-
-        var queueServiceEntity = new QueueServicesEntity
-        {
-            QueueId = queueEntity.Id,
-            ServiceId = serviceEntity.Id
-        };
-        await queueServiceRepository.AddAsync(queueServiceEntity);
-
-        await dbContext.SaveChangesAsync();
-
-        var startTimeForFirstClient =
-            now.AddMinutes(-3).ToString("o"); // Первый клиент начал обслуживание 3 минуты назад
-        var clients = new List<ClientsEntity>
-        {
-            new ClientsEntity
-            {
-                QueueId = queueEntity.Id,
-                QueueServiceId = queueServiceEntity.Id,
-                UserId = 1,
-                Position = 1,
-                StartTime = startTimeForFirstClient
-            },
-            new ClientsEntity
-            {
-                QueueId = queueEntity.Id,
-                QueueServiceId = queueServiceEntity.Id,
-                UserId = 2,
-                Position = 2,
-                StartTime = null
-            },
-            new ClientsEntity
-            {
-                QueueId = queueEntity.Id,
-                QueueServiceId = queueServiceEntity.Id,
-                UserId = 3,
-                Position = 3,
-                StartTime = null
-            }
-        };
-
-        foreach (var client in clients)
-        {
-            await clientRepository.AddAsync(client);
-        }
-
-        await dbContext.SaveChangesAsync();
-
-        // Тестируемый клиент — второй в очереди
-        var testClient = clients[1];
-
-        var queueService = new QueueService(queueRepository, queueServiceRepository, clientRepository,
-            organizationRepository, serviceRepository);
-
-        var waitTime = await queueService.GetClientTimeQuery(testClient);
-
-        var elapsedTimeForFirstClient = TimeSpan.FromMinutes(3);
-        var serviceAverageTime = TimeSpan.FromMinutes(5);
-
-        var remainingTimeForFirstClient = serviceAverageTime - elapsedTimeForFirstClient;
-
-        remainingTimeForFirstClient =
-            remainingTimeForFirstClient > TimeSpan.Zero ? remainingTimeForFirstClient : TimeSpan.Zero;
-
-        var expectedWaitTime = remainingTimeForFirstClient + serviceAverageTime;
-
-        Assert.Equal(expectedWaitTime, waitTime);
-    }*/
-
 
     [Fact]
     public async Task MoveQueue_Should_Update_Queue_Correctly()
     {
-        var dbContext = GetDbContext();
-        var queueRepository = new Repository<QueueEntity>(dbContext);
-        var queueServicesRepository = new Repository<QueueServicesEntity>(dbContext);
-        var clientRepository = new Repository<ClientsEntity>(dbContext);
-        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
-        var organizationRepository = new Repository<OrganizationEntity>(dbContext);
-
-        var queueService = new QueueService(queueRepository, queueServicesRepository, clientRepository,
-            organizationRepository, serviceRepository);
-
         var organizationEntity = new OrganizationEntity { Name = "Test Organization" };
-        await organizationRepository.AddAsync(organizationEntity);
-        await dbContext.SaveChangesAsync();
+        await _organizationRepository.AddAsync(organizationEntity);
+        await _context.SaveChangesAsync();
 
         var serviceEntity = new ServiceEntity
         {
@@ -277,24 +194,24 @@ public class QueueServiceTest
             AverageTime = "00:05:00",
             OrganizationId = organizationEntity.Id
         };
-        await serviceRepository.AddAsync(serviceEntity);
-        await dbContext.SaveChangesAsync();
+        await _serviceRepository.AddAsync(serviceEntity);
+        await _context.SaveChangesAsync();
 
         var queueEntity = new QueueEntity
         {
             OrganizationId = organizationEntity.Id,
             WindowNumber = 1
         };
-        await queueRepository.AddAsync(queueEntity);
-        await dbContext.SaveChangesAsync();
+        await _queueRepository.AddAsync(queueEntity);
+        await _context.SaveChangesAsync();
 
         var queueServiceEntity = new QueueServicesEntity
         {
             QueueId = queueEntity.Id,
             ServiceId = serviceEntity.Id
         };
-        await queueServicesRepository.AddAsync(queueServiceEntity);
-        await dbContext.SaveChangesAsync();
+        await _queueServicesRepository.AddAsync(queueServiceEntity);
+        await _context.SaveChangesAsync();
 
         var startTime = DateTime.Now.AddMinutes(-6).ToString("o"); // Клиент обслуживается уже 6 минут
         var clients = new List<ClientsEntity>
@@ -327,16 +244,16 @@ public class QueueServiceTest
 
         foreach (var client in clients)
         {
-            await clientRepository.AddAsync(client);
+            await _clientRepository.AddAsync(client);
         }
 
-        await dbContext.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         var organization = new Organization(organizationEntity.Id, organizationEntity.Name);
 
-        await queueService.MoveQueue(organization, 1);
+        await _queueService.MoveQueue(organization, 1);
 
-        var remainingClients = await clientRepository
+        var remainingClients = await _clientRepository
             .GetAllByValueAsync(c => c.QueueId, queueEntity.Id)
             .OrderBy(c => c.Position)
             .ToListAsync();
@@ -353,9 +270,6 @@ public class QueueServiceTest
     [Fact]
     public async Task GetNumberClientsBeforeQuery_Should_Return_Correct_Count()
     {
-        var dbContext = GetDbContext();
-        var clientRepository = new Repository<ClientsEntity>(dbContext);
-
         var queueId = 1L;
 
         var clients = new List<ClientsEntity>
@@ -368,14 +282,14 @@ public class QueueServiceTest
 
         foreach (var client in clients)
         {
-            await clientRepository.AddAsync(client);
+            await _clientRepository.AddAsync(client);
         }
 
-        await dbContext.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         var testClient = clients[3];
 
-        var queueService = new QueueService(null, null, clientRepository, null, null);
+        var queueService = new QueueService(null, null, _clientRepository, null, null);
 
         var countBefore = await queueService.GetNumberClientsBeforeQuery(testClient);
 
@@ -385,23 +299,12 @@ public class QueueServiceTest
     [Fact]
     public async Task GetAllClientsInQueueQuery_Should_Return_All_Clients_In_Queue()
     {
-        // Arrange
-        var dbContext = GetDbContext();
-        var queueRepository = new Repository<QueueEntity>(dbContext);
-        var clientRepository = new Repository<ClientsEntity>(dbContext);
-        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
-        var queueServiceRepository = new Repository<QueueServicesEntity>(dbContext);
-        var organizationRepository = new Repository<OrganizationEntity>(dbContext);
-
-        var queueService = new QueueService(queueRepository, queueServiceRepository, clientRepository,
-            organizationRepository, serviceRepository);
-
         var organization = new OrganizationEntity
         {
             Name = "Test Organization"
         };
-        await organizationRepository.AddAsync(organization);
-        await dbContext.SaveChangesAsync();
+        await _organizationRepository.AddAsync(organization);
+        await _context.SaveChangesAsync();
 
         var service = new ServiceEntity
         {
@@ -409,24 +312,24 @@ public class QueueServiceTest
             AverageTime = "00:05:00",
             OrganizationId = organization.Id
         };
-        await serviceRepository.AddAsync(service);
-        await dbContext.SaveChangesAsync();
+        await _serviceRepository.AddAsync(service);
+        await _context.SaveChangesAsync();
 
         var queue = new QueueEntity
         {
             OrganizationId = organization.Id,
             WindowNumber = 1
         };
-        await queueRepository.AddAsync(queue);
-        await dbContext.SaveChangesAsync();
+        await _queueRepository.AddAsync(queue);
+        await _context.SaveChangesAsync();
 
         var queueServiceEntity = new QueueServicesEntity
         {
             QueueId = queue.Id,
             ServiceId = service.Id
         };
-        await queueServiceRepository.AddAsync(queueServiceEntity);
-        await dbContext.SaveChangesAsync();
+        await _queueServicesRepository.AddAsync(queueServiceEntity);
+        await _context.SaveChangesAsync();
 
         var clients = new List<ClientsEntity>
         {
@@ -458,16 +361,14 @@ public class QueueServiceTest
 
         foreach (var client in clients)
         {
-            await clientRepository.AddAsync(client);
+            await _clientRepository.AddAsync(client);
         }
 
-        await dbContext.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
-        // Act
-        var result = await queueService.GetAllClientsInQueueQuery(
+        var result = await _queueService.GetAllClientsInQueueQuery(
             new Organization(organization.Id, organization.Name), 1);
 
-        // Assert
         Assert.NotNull(result);
         Assert.Equal(3, result.Count);
         Assert.Equal(1, result[0].Id); // Проверка, что клиенты идут в правильном порядке
@@ -479,22 +380,12 @@ public class QueueServiceTest
     [Fact]
     public async Task GetAllServices_Should_Return_All_Services_For_Organization()
     {
-        var dbContext = GetDbContext();
-        var serviceRepository = new Repository<ServiceEntity?>(dbContext);
-        var organizationRepository = new Repository<OrganizationEntity>(dbContext);
-        var queueRepository = new Repository<QueueEntity>(dbContext);
-        var clientRepository = new Repository<ClientsEntity>(dbContext);
-        var queueServiceRepository = new Repository<QueueServicesEntity>(dbContext);
-
-        var queueService = new QueueService(queueRepository, queueServiceRepository, clientRepository,
-            organizationRepository, serviceRepository);
-
         var organization = new OrganizationEntity
         {
             Name = "Test Organization"
         };
-        await organizationRepository.AddAsync(organization);
-        await dbContext.SaveChangesAsync();
+        await _organizationRepository.AddAsync(organization);
+        await _context.SaveChangesAsync();
 
         var service1 = new ServiceEntity
         {
@@ -508,13 +399,13 @@ public class QueueServiceTest
             AverageTime = "00:30:00",
             OrganizationId = organization.Id
         };
-        await serviceRepository.AddAsync(service1);
-        await serviceRepository.AddAsync(service2);
-        await dbContext.SaveChangesAsync();
+        await _serviceRepository.AddAsync(service1);
+        await _serviceRepository.AddAsync(service2);
+        await _context.SaveChangesAsync();
 
-        var domainOrganization = organization.ToDomain(serviceRepository);
+        var domainOrganization = organization.ToDomain(_serviceRepository);
 
-        var services = await queueService.GetAllServices(domainOrganization);
+        var services = await _queueService.GetAllServices(domainOrganization);
 
         Assert.NotNull(services);
         Assert.Equal(2, services.Count);
@@ -526,5 +417,44 @@ public class QueueServiceTest
         var serviceAverageTimes = services.Select(s => s.AverageTime).ToList();
         Assert.Contains(TimeSpan.FromMinutes(15), serviceAverageTimes);
         Assert.Contains(TimeSpan.FromMinutes(30), serviceAverageTimes);
+    }
+
+    [Fact]
+    public async Task CreateQueueAsync_Should_Throw_NotImplementedException()
+    {
+        var organization = new Organization(1, "Test Organization");
+
+        await Assert.ThrowsAsync<NotImplementedException>(async () =>
+            await _queueService.CreateQueueAsync(organization, 1));
+    }
+
+    [Fact]
+    public async Task GetClientTimeQuery_Should_Return_Correct_Wait_Time()
+    {
+        var service = new ServiceEntity { Name = "Test Service", AverageTime = "00:10:00" };
+        await _serviceRepository.AddAsync(service);
+        await _context.SaveChangesAsync();
+
+        var queueServiceEntity = new QueueServicesEntity
+        {
+            ServiceId = service.Id,
+            QueueId = 1
+        };
+        await _queueServicesRepository.AddAsync(queueServiceEntity);
+        await _context.SaveChangesAsync();
+
+        var clientEntity = new ClientsEntity
+        {
+            QueueId = 1,
+            Position = 1,
+            StartTime = null,
+            QueueServiceId = queueServiceEntity.Id
+        };
+        await _clientRepository.AddAsync(clientEntity);
+        await _context.SaveChangesAsync();
+
+        var waitTime = await _queueService.GetClientTimeQuery(clientEntity);
+
+        Assert.Equal(TimeSpan.FromMinutes(0), waitTime); // очередь не запущена
     }
 }
