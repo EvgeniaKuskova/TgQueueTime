@@ -122,27 +122,27 @@ public class QueueService
         }
 
         if (optimalQueue == null)
-            {
-                throw new InvalidOperationException(
-                    $"Не удалось найти оптимальную очередь для клиента в организации '{organization.Name}'.");
-            }
+        {
+            throw new InvalidOperationException(
+                $"Не удалось найти оптимальную очередь для клиента в организации '{organization.Name}'.");
+        }
 
-            // Добавляем клиента в оптимальную очередь
-            var clientEntity = new ClientsEntity
-            {
-                QueueId = optimalQueue.Id,
-                UserId = client.Id,
-                Position = await _clientRepository
-                    .GetAllByValueAsync(c => c.QueueId, optimalQueue.Id)
-                    .CountAsync() + 1,
-                StartTime = null,
-                QueueServiceId =
-                    queueServices.First(qs => qs.QueueId == optimalQueue.Id)
-                        .Id // Устанавливаем существующий QueueServiceId
-            };
+        // Добавляем клиента в оптимальную очередь
+        var clientEntity = new ClientsEntity
+        {
+            QueueId = optimalQueue.Id,
+            UserId = client.Id,
+            Position = await _clientRepository
+                .GetAllByValueAsync(c => c.QueueId, optimalQueue.Id)
+                .CountAsync() + 1,
+            StartTime = null,
+            QueueServiceId =
+                queueServices.First(qs => qs.QueueId == optimalQueue.Id)
+                    .Id // Устанавливаем существующий QueueServiceId
+        };
 
 
-            await _clientRepository.AddAsync(clientEntity);
+        await _clientRepository.AddAsync(clientEntity);
     }
 
     public Task CreateQueueAsync(Organization organization, int windowNumber)
@@ -189,14 +189,18 @@ public class QueueService
             ? remainingTimeForLastClient
             : TimeSpan.Zero;
 
-        foreach (var clientInQueue in clientsInQueue.Where(c => (c.Position < client.Position) && (c.StartTime is null)))
+        foreach (var clientInQueue in
+                 clientsInQueue.Where(c => (c.Position < client.Position) && (c.StartTime is null)))
         {
             var queueServiceId = clientInQueue.QueueServiceId;
-            var serviceId = _queueServicesRepository.GetByConditionsAsync(key => key.Id == queueServiceId).Result.ServiceId;
-            var clientServiceAverageTime = _serviceRepository.GetByConditionsAsync(key => key.Id == serviceId).Result.AverageTime;
+            var serviceId = _queueServicesRepository.GetByConditionsAsync(key => key.Id == queueServiceId).Result
+                .ServiceId;
+            var clientServiceAverageTime =
+                _serviceRepository.GetByConditionsAsync(key => key.Id == serviceId).Result.AverageTime;
 
             totalWaitTime += TimeSpan.Parse(clientServiceAverageTime);
         }
+
         return totalWaitTime;
     }
 
@@ -261,7 +265,7 @@ public class QueueService
         var clientsInQueue = await _clientRepository
             .GetAllByValueAsync(c => c.QueueId, clientEntity.QueueId)
             .Where(c => c.StartTime == null) // Считаем только тех, у кого StartTime == null
-            .OrderBy(c => c.Position) 
+            .OrderBy(c => c.Position)
             .ToListAsync();
 
         var numberOfClientsBefore = clientsInQueue.Count(c => c.Position < clientEntity.Position);
@@ -289,7 +293,8 @@ public class QueueService
         var domainClients = clientsInQueue.Select(clientEntity =>
         {
             var queueServiceId = clientEntity.QueueServiceId;
-            var serviceId = _queueServicesRepository.GetByConditionsAsync(key => key.Id == queueServiceId).Result.ServiceId;
+            var serviceId = _queueServicesRepository.GetByConditionsAsync(key => key.Id == queueServiceId).Result
+                .ServiceId;
             var serviceEntity = _serviceRepository.GetByConditionsAsync(key => key.Id == serviceId).Result;
             var service = new Service(serviceEntity.Name, TimeSpan.Parse(serviceEntity.AverageTime));
             return new Client(clientEntity.UserId, service);
@@ -311,4 +316,26 @@ public class QueueService
         return services;
     }
 
+    public async Task<bool> IsQueueStarted(Organization organization, ClientsEntity clientsEntity)
+    {
+        var queueServiceEntity =
+            await _queueServicesRepository.GetByConditionsAsync(q => q.Id == clientsEntity.QueueServiceId);
+        var queue = await _queueRepository.GetByConditionsAsync(
+            q => q.Id == queueServiceEntity.QueueId);
+        if (queue is null)
+        {
+            throw new InvalidOperationException(
+                $"Очередь в организации с ID {organization.Id} не найдена.");
+        }
+        var clientsInQueue = await _clientRepository
+            .GetAllByValueAsync(c => c.QueueId, queue.Id)
+            .ToListAsync();
+
+        var lastStartedClient = clientsInQueue
+            .Where(c => !string.IsNullOrEmpty(c.StartTime))
+            .OrderByDescending(c => c.Position)
+            .FirstOrDefault();
+
+        return lastStartedClient != null;
+    }
 }

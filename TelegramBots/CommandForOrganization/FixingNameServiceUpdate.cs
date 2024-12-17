@@ -15,7 +15,7 @@ public class FixingNameServiceUpdate: ICommand
     }
 
     public async Task ExecuteAsync(ITelegramBotClient botClient, long chatId, Dictionary<long, UserState> userStates,
-        string messageText)
+        string messageText, CancellationToken cancellationToken)
     {
         _serviceAverageTimeUpdate[chatId] = messageText;
         await botClient.SendTextMessageAsync(chatId, _goodResponse);

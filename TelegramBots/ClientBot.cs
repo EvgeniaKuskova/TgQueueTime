@@ -32,7 +32,14 @@ public class ClientBot
         _botClient.StartReceiving(_updateHandler.HandleUpdateAsync, ErrorHandler, receiverOptions, cts.Token);
         var me = await _botClient.GetMeAsync(cts.Token);
         Console.WriteLine($"{me.FirstName} запущен!");
-        await Task.Delay(-1);
+        try
+        {
+            await Task.Delay(Timeout.Infinite, cts.Token);
+        }
+        catch (TaskCanceledException)
+        {
+            Console.WriteLine("Бот остановлен.");
+        }
     }
 
     private static Task ErrorHandler(ITelegramBotClient botClient, Exception error, CancellationToken cancellationToken)

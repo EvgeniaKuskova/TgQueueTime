@@ -16,7 +16,7 @@ public class RegisterService: ICommand
         _goodResponse = "Услуга успешно добавлена!";
     }
     public async Task ExecuteAsync(ITelegramBotClient botClient, long chatId, Dictionary<long, UserState> userStates,
-        string messageText)
+        string messageText, CancellationToken cancellationToken)
     {
         var windows = messageText.Split(',').Select(x => x.Trim()).ToList();
         if (windows.Any(x => !int.TryParse(x, out _)))

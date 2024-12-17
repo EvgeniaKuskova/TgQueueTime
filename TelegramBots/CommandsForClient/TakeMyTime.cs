@@ -14,7 +14,7 @@ public class TakeMyTime : ICommand
     }
 
     public async Task ExecuteAsync(ITelegramBotClient botClient, long chatId, Dictionary<long, UserState> userStates,
-        string messageText)
+        string messageText, CancellationToken cancellationToken)
     {
         var result = await _queries.GetClientTimeQuery(chatId);
         if (result.IsFailure)
@@ -24,7 +24,10 @@ public class TakeMyTime : ICommand
         }
             
         _myTime = result.Value;
-        await botClient.SendTextMessageAsync(chatId, $"Ваше время ожидания составляет {_myTime}");
+        var hours = _myTime.Hours;
+        var minutes = _myTime.Minutes;
+        var resultTime = hours == 0 ? $"{_myTime.Minutes} минут" : $"{hours} часов {minutes} минут";
+        await botClient.SendTextMessageAsync(chatId, $"Ваше время ожидания составляет {resultTime}");
         userStates[chatId] = UserState.ClientStart;
     }
 

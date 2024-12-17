@@ -54,25 +54,27 @@ public class ClientUpdateHandler : IUpdateHandler
         var chatId = update.Message.Chat.Id;
         try
         {
-            if (update.Type == UpdateType.Message && update.Message!.Type == MessageType.Text)
+            var chatId = update.Message.Chat.Id;
+            var messageText = update.Message.Text;
+
+            if (!_userStates.ContainsKey(chatId))
+                _userStates[chatId] = UserState.ClientStart;
+
+            var userState = _userStates[chatId];
+
+            if (_botResponses.TryGetValue(messageText, out var command))
             {
-                var messageText = update.Message.Text;
-
-                if (!_userStates.ContainsKey(chatId))
-                    _userStates[chatId] = UserState.ClientStart;
-
-                var userState = _userStates[chatId];
-
-                if (_botResponses.TryGetValue(messageText, out var command))
-                    await command.ExecuteAsync(_botClient, chatId, _userStates, messageText);
-                else if (userState == UserState.ClientStart)
-                    await _botResponses["default"].ExecuteAsync(_botClient, chatId, _userStates, messageText);
-                else
-                {
-                    await _commandsBot
-                        .First(x => x.Accept(userState))
-                        .ExecuteAsync(_botClient, chatId, _userStates, messageText);
-                }
+                await command.ExecuteAsync(_botClient, chatId, _userStates, messageText, cancellationToken);
+            }
+            else if (userState == UserState.ClientStart)
+            {
+                await _botResponses["default"].ExecuteAsync(_botClient, chatId, _userStates, messageText, cancellationToken);
+            }
+            else
+            {
+                await _commandsBot
+                    .First(x => x.Accept(userState))
+                    .ExecuteAsync(_botClient, chatId, _userStates, messageText, cancellationToken);  
             }
         }
         

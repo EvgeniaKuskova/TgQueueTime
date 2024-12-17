@@ -16,7 +16,7 @@ public class RegisterClient : ICommand
     }
 
     public async Task ExecuteAsync(ITelegramBotClient botClient, long chatId, Dictionary<long, UserState> userStates,
-        string messageText)
+        string messageText, CancellationToken cancellationToken)
     {
         var allOrganizations = await _queries.GetAllOrganizations();
         var nameOrganizations = allOrganizations.Select(x => x.Name).ToArray();

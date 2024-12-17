@@ -15,9 +15,21 @@ public class GetNameOrganization : ICommand
     }
 
     public async Task ExecuteAsync(ITelegramBotClient botClient, long chatId, Dictionary<long, UserState> userStates,
-        string messageText)
+        string messageText, CancellationToken cancellationToken)
     {
-        _allOrganizations = await _queries.GetAllOrganizations();
+        try
+        {
+            var task = _queries.GetAllOrganizations();
+            _allOrganizations = await task;
+        }
+
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            if (e is InvalidOperationException)
+                await botClient.SendTextMessageAsync(chatId, e.Message);
+            throw;
+        }
         var nameOrganizations = _allOrganizations.Select(x => x.Name).ToArray();
         var organizationsString = string.Join(" | ", nameOrganizations);
         await botClient.SendTextMessageAsync(chatId, $"Выбери организацию, в которой нужно занять очередь ( | это разделитель): {organizationsString}");
