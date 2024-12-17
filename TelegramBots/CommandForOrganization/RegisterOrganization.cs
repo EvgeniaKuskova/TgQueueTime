@@ -18,7 +18,7 @@ public class RegisterOrganization: ICommand
     }
 
     public async Task ExecuteAsync(ITelegramBotClient botClient, long chatId, Dictionary<long, UserState> userStates, 
-        string messageText)
+        string messageText, CancellationToken cancellationToken)
     {
 
         try

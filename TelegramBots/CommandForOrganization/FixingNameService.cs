@@ -15,7 +15,7 @@ public class FixingNameService: ICommand
     }
 
     public async Task ExecuteAsync(ITelegramBotClient botClient, long chatId, Dictionary<long, UserState> userStates, 
-        string messageText)
+        string messageText, CancellationToken cancellationToken)
     {
         _serviceAverageTime[chatId] = new Dictionary<string, TimeSpan>
         {

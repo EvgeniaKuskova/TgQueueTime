@@ -14,7 +14,7 @@ public class FixingAverageTime: ICommand
                     "Например: 1, 2, 3";
     }
     public async Task ExecuteAsync(ITelegramBotClient botClient, long chatId, Dictionary<long, UserState> userStates,
-        string messageText)
+        string messageText, CancellationToken cancellationToken)
     {
         var parts = messageText.Split(' ');
         if (!int.TryParse(parts[0], out var minute) || minute < 0)
