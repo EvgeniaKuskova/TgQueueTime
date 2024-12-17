@@ -80,14 +80,14 @@ public class UpdateHandler : IUpdateHandler
             var userState = _userStates[chatId];
             
             if (_botResponses.TryGetValue(messageText, out var command))
-                await command.ExecuteAsync(_botClient, chatId, _userStates, messageText);
+                await command.ExecuteAsync(_botClient, chatId, _userStates, messageText, cancellationToken);
             else if (userState == UserState.Start)
-                await _botResponses["default"].ExecuteAsync(_botClient, chatId, _userStates, messageText);
+                await _botResponses["default"].ExecuteAsync(_botClient, chatId, _userStates, messageText, cancellationToken);
             else
             {
                 await _botCommands
                     .First(x => x.Accept(userState))
-                    .ExecuteAsync(_botClient, chatId, _userStates, messageText);
+                    .ExecuteAsync(_botClient, chatId, _userStates, messageText, cancellationToken);
             }
         }
     }

@@ -63,49 +63,17 @@ public class ClientUpdateHandler : IUpdateHandler
 
             if (_botResponses.TryGetValue(messageText, out var command))
             {
-                await command.ExecuteAsync(_botClient, chatId, _userStates, messageText);
-                try
-                {
-                    _ = Task.Run(() => CheckClientTimeAsync(botClient, chatId, cancellationToken));
-                }
-                catch{}
+                await command.ExecuteAsync(_botClient, chatId, _userStates, messageText, cancellationToken);
             }
             else if (userState == UserState.ClientStart)
             {
-                await _botResponses["default"].ExecuteAsync(_botClient, chatId, _userStates, messageText);
+                await _botResponses["default"].ExecuteAsync(_botClient, chatId, _userStates, messageText, cancellationToken);
             }
             else
             {
                 await _commandsBot
                     .First(x => x.Accept(userState))
-                    .ExecuteAsync(_botClient, chatId, _userStates, messageText);
-                _ = Task.Run(() => CheckClientTimeAsync(botClient, chatId, cancellationToken));
-            }
-        }
-    }
-
-    private async Task CheckClientTimeAsync(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
-    {
-        while (true)
-        {
-            try
-            {
-                var _myTime = await _queries.GetClientTimeQuery(chatId);
-
-                var fiveMinutesMore = new TimeSpan(0, 5, 10);
-                var fiveMinutes = new TimeSpan(0, 5, 0);
-
-                if (_myTime < fiveMinutesMore && _myTime > fiveMinutes)
-                {
-                    await botClient.SendTextMessageAsync(chatId, $"Уведомление! " +
-                        $"\nВаше время ожидания составляет {_myTime.Minutes} минут");
-                    break;
-                }
-                await Task.Delay(1000, cancellationToken);
-            }
-            catch
-            {
-                break;
+                    .ExecuteAsync(_botClient, chatId, _userStates, messageText, cancellationToken);  
             }
         }
     }

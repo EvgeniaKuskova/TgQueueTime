@@ -16,7 +16,7 @@ public class UpdatingAverageTime: ICommand
         _goodResponse = "Время успешно обновлено";
     }
     public async Task ExecuteAsync(ITelegramBotClient botClient, long chatId, Dictionary<long, UserState> userStates, 
-        string messageText)
+        string messageText, CancellationToken cancellationToken)
     {
         var parts = messageText.Split(' ');
         if (!int.TryParse(parts[0], out var minutes) || minutes < 0)
