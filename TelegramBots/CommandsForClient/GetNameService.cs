@@ -24,6 +24,7 @@ public class GetNameService : ICommand
     {
         var nameService = messageText;
         var services = await _queries.GetAllServices(_organization[chatId]);
+        
         if (services.IsFailure)
         {
             await botClient.SendTextMessageAsync(chatId, services.Error);
@@ -37,25 +38,31 @@ public class GetNameService : ICommand
             userStates[chatId] = UserState.WaitingClientForNameService;
             return;
         }
+        
         var result = await _commands.AddClientToQueueCommand(chatId, nameService, _organization[chatId]);
-
         if (result.IsFailure)
         {
             await botClient.SendTextMessageAsync(chatId, result.Error);
             return;
         }
         
-        try
+        var queueIsStarted = await _queries.IsQueueStarted(_organization[chatId], chatId);
+        var newClientTime = await _queries.GetClientTimeQuery(chatId);
+        if (queueIsStarted.IsFailure)
         {
-            queueIsStarted = await _queries.IsQueueStarted(_organization[chatId], chatId);
-            _myTime = await _queries.GetClientTimeQuery(chatId);
+            await botClient.SendTextMessageAsync(chatId, queueIsStarted.Error);
+            return;
         }
-        catch (Exception as e){
-            
+        
+        if (newClientTime.IsFailure)
+        {
+            await botClient.SendTextMessageAsync(chatId, newClientTime.Error);
+            return;
         }
-
-
-        if (queueIsStarted)
+        
+        _myTime = newClientTime.Value;
+        
+        if (queueIsStarted.Value)
         {
             var resultTime = _myTime.Hours == 0 ? $"{_myTime.Minutes} минут" : $"{_myTime.Hours} часов {_myTime.Minutes} минут";
             await botClient.SendTextMessageAsync(chatId,
@@ -131,12 +138,17 @@ public class GetNameService : ICommand
         while (true)
         {
             var queueIsStarted = await _queries.IsQueueStarted(_organization[chatId], chatId);
-            if (queueIsStarted)
+            if (queueIsStarted.IsFailure)
+            {
+                await botClient.SendTextMessageAsync(chatId, queueIsStarted.Error);
+                return;
+            }
+            if (queueIsStarted.Value)
             {
                 try
                 {
                     var myTime = await _queries.GetClientTimeQuery(chatId);
-                    if (await notificationAction(myTime))
+                    if (await notificationAction(myTime.Value))
                         break;
                 }
                 catch

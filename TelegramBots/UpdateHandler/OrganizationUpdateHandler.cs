@@ -72,7 +72,6 @@ public class OrganizationUpdateHandler : IUpdateHandler
         var chatId = update.Message.Chat.Id;
         try
         {
-            var chatId = update.Message.Chat.Id;
             var messageText = update.Message.Text;
 
             if (!_userStates.ContainsKey(chatId))

@@ -212,8 +212,6 @@ public class QueueService
         if (queueEntity == null)
         {
             return Result.Failure($"Очередь для окна {windowNumber} в организации с именем {organization.Name} не найдена.");
-            //throw new InvalidOperationException(
-                //$"Очередь для окна {windowNumber} в организации с ID {organization.Id} не найдена.");
         }
 
         var clientsInQueue = await _clientRepository
@@ -230,15 +228,12 @@ public class QueueService
             if (queueServiceEntity == null)
             {
                 return Result.Failure($"Связь QueueService для клиента с ID {currentClient.Id} не найдена.");
-                throw new InvalidOperationException(
-                    $"Связь QueueService для клиента с ID {currentClient.Id} не найдена.");
             }
 
             var serviceEntity = await _serviceRepository.GetByKeyAsync(queueServiceEntity.ServiceId);
             if (serviceEntity == null)
             {
-                return Result.Failure($"Данная услуга не найдена, попробуйте еще раз");
-                //throw new InvalidOperationException($"Услуга с ID {queueServiceEntity.ServiceId} не найдена.");
+                return Result.Failure("Данная услуга не найдена, попробуйте еще раз");
             }
 
             await _clientRepository.DeleteAsync(currentClient.Id);
@@ -250,8 +245,6 @@ public class QueueService
         if (nextClient == null)
         {
             return Result.Failure($"В очереди для окна {windowNumber} нет клиентов, ожидающих обслуживания.");
-            //throw new InvalidOperationException(
-                //$"В очереди для окна {windowNumber} нет клиентов, ожидающих обслуживания.");
         }
 
         nextClient.StartTime = DateTime.Now.ToString("o");
@@ -273,34 +266,43 @@ public class QueueService
         return numberOfClientsBefore;
     }
 
-    public async Task<List<Client>> GetAllClientsInQueueQuery(Organization organization, int windowNumber)
+    public async Task<Result<List<Client>>> GetAllClientsInQueueQuery(Organization organization, int windowNumber)
     {
         var queueEntity = await _queueRepository.GetByConditionsAsync(
             q => q.OrganizationId == organization.Id && q.WindowNumber == windowNumber);
 
         if (queueEntity == null)
         {
-            throw new InvalidOperationException(
+            Result.Failure<List<Client>>(
                 $"Очередь для окна {windowNumber} в организации {organization.Name} не найдена.");
         }
 
-        var clientsInQueue = await _clientRepository
-            .GetAllByValueAsync(c => c.QueueId, queueEntity.Id)
-            .OrderBy(c => c.Position)
-            .ToListAsync();
-
-        // Преобразуем сущности клиентов в доменные модели
-        var domainClients = clientsInQueue.Select(clientEntity =>
+        try
         {
-            var queueServiceId = clientEntity.QueueServiceId;
-            var serviceId = _queueServicesRepository.GetByConditionsAsync(key => key.Id == queueServiceId).Result
-                .ServiceId;
-            var serviceEntity = _serviceRepository.GetByConditionsAsync(key => key.Id == serviceId).Result;
-            var service = new Service(serviceEntity.Name, TimeSpan.Parse(serviceEntity.AverageTime));
-            return new Client(clientEntity.UserId, service);
-        }).ToList();
+            var clientsInQueue = await _clientRepository
+                .GetAllByValueAsync(c => c.QueueId, queueEntity.Id)
+                .OrderBy(c => c.Position)
+                .ToListAsync();
 
-        return domainClients;
+            // Преобразуем сущности клиентов в доменные модели
+            var domainClients = clientsInQueue.Select(clientEntity =>
+            {
+                var queueServiceId = clientEntity.QueueServiceId;
+                var serviceId = _queueServicesRepository.GetByConditionsAsync(key => key.Id == queueServiceId).Result
+                    .ServiceId;
+                var serviceEntity = _serviceRepository.GetByConditionsAsync(key => key.Id == serviceId).Result;
+                var service = new Service(serviceEntity.Name, TimeSpan.Parse(serviceEntity.AverageTime));
+                return new Client(clientEntity.UserId, service);
+            }).ToList();
+            
+            return Result.Success(domainClients);
+        }
+
+        catch (Exception e)
+        {
+            return Result.Failure<List<Client>>(
+                $"Очередь для окна {windowNumber} в организации {organization.Name} не найдена.");
+        }
     }
 
     public async Task<List<Service>> GetAllServices(Organization organization)
@@ -316,7 +318,7 @@ public class QueueService
         return services;
     }
 
-    public async Task<bool> IsQueueStarted(Organization organization, ClientsEntity clientsEntity)
+    public async Task<Result<bool>> IsQueueStarted(Organization organization, ClientsEntity clientsEntity)
     {
         var queueServiceEntity =
             await _queueServicesRepository.GetByConditionsAsync(q => q.Id == clientsEntity.QueueServiceId);
@@ -324,8 +326,7 @@ public class QueueService
             q => q.Id == queueServiceEntity.QueueId);
         if (queue is null)
         {
-            throw new InvalidOperationException(
-                $"Очередь в организации с ID {organization.Id} не найдена.");
+            return Result.Failure<bool>($"Очередь в организации с именем {organization.Name} не найдена.");
         }
         var clientsInQueue = await _clientRepository
             .GetAllByValueAsync(c => c.QueueId, queue.Id)
@@ -335,7 +336,9 @@ public class QueueService
             .Where(c => !string.IsNullOrEmpty(c.StartTime))
             .OrderByDescending(c => c.Position)
             .FirstOrDefault();
+        
+        var result = lastStartedClient != null;
 
-        return lastStartedClient != null;
+        return Result.Success(result);
     }
 }

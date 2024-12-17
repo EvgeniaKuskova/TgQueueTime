@@ -369,11 +369,11 @@ public class QueueServiceTest
         var result = await _queueService.GetAllClientsInQueueQuery(
             new Organization(organization.Id, organization.Name), 1);
 
-        Assert.NotNull(result);
-        Assert.Equal(3, result.Count);
-        Assert.Equal(1, result[0].Id); // Проверка, что клиенты идут в правильном порядке
-        Assert.Equal(2, result[1].Id);
-        Assert.Equal(3, result[2].Id);
+        Assert.NotNull(result.Value);
+        Assert.Equal(3, result.Value.Count);
+        Assert.Equal(1, result.Value[0].Id); // Проверка, что клиенты идут в правильном порядке
+        Assert.Equal(2, result.Value[1].Id);
+        Assert.Equal(3, result.Value[2].Id);
     }
 
 

@@ -62,7 +62,7 @@ public class Queries
         }
         var organization = organizationEntity.ToDomain(_serviceRepository);
         var clients = await _queueService.GetAllClientsInQueueQuery(organization, windowNumber);
-        return Result.Success(clients);
+        return clients;
     }
 
     public async Task<Result<List<Service>>> GetAllServices(string nameOrganization)
@@ -82,18 +82,18 @@ public class Queries
         return await _organizationService.GetAllOrganizations();
     }
 
-    public async Task<bool> IsQueueStarted(string nameOrganization, long idClient)
+    public async Task<Result<bool>> IsQueueStarted(string nameOrganization, long idClient)
     {
         var organizationEntity = await _organizationRepository.GetByConditionsAsync(o => o.Name == nameOrganization);
         if (organizationEntity == null)
         {
-            throw new InvalidOperationException($"Организация с id {nameOrganization} не найдена.");
+            return Result.Failure<bool>("Ваша организация не зарегистрирована");
         }
         var organization = organizationEntity.ToDomain(_serviceRepository);
         var clientEntity = await _clientRepository.GetByConditionsAsync(client => client.UserId == idClient);
         if (clientEntity == null)
         {
-            throw new InvalidOperationException($"Клиент с id {idClient} не стоит в очереди");
+            return Result.Failure<bool>($"Клиент с id {idClient} не стоит в очереди");
         }
 
         return await _queueService.IsQueueStarted(organization, clientEntity);
